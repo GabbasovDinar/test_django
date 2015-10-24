@@ -1,10 +1,16 @@
 from django.contrib import admin
-from .models import User, CashMove, ProductCategory
+from .models import User, CashMove, ProductCategory, DeliveryService, Product, Order, OrderProductLine
 
 class CashMoveInLine(admin.TabularInline):
     model = CashMove
     extra = 3    
-
+class PoductInLine(admin.TabularInline):
+    model = Product
+    extra = 3   
+class OrderProductLineInLine(admin.TabularInline):
+    model = OrderProductLine
+    extra = 3    
+    
 class UserAdmin(admin.ModelAdmin):
     fieldsets = [
             (None,               {'fields': ['Login', 'Password', 'RegistrationCheck']}),
@@ -17,6 +23,22 @@ class UserAdmin(admin.ModelAdmin):
     
 class ProductCategoryAdmin(admin.ModelAdmin):
     fields = ['NameCategory']
+    inlines = [PoductInLine]
+    search_fields = ['NameCategory']
 
+class DeliveryServiceAdmin(admin.ModelAdmin):
+    fields = ['NameServis', 'Telephone']
+    list_display = ('NameServis', 'Telephone')
+    search_fields = ['NameServis']
+  
+class OrderAdmin(admin.ModelAdmin):
+    fields = ['UserID', 'DateOrder']
+    inlines = [OrderProductLineInLine]
+    list_display = ('UserID', 'DateOrder')
+    search_fields = ['UserID']    
+    list_filter = ['DateOrder']
+   
 admin.site.register(User, UserAdmin)
 admin.site.register(ProductCategory, ProductCategoryAdmin)
+admin.site.register(DeliveryService, DeliveryServiceAdmin)
+admin.site.register(Order, OrderAdmin)
