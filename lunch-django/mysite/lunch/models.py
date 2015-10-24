@@ -41,7 +41,7 @@ class Order(models.Model):
     DateOrder = models.DateTimeField('date order product')
     UserID = models.ForeignKey('User')
     def __str__(self): 
-        return self.DateOrder >= timezone.now() - datetime.timedelta(days=1)
+        return str(self.UserID)
     
 class OrderProductLine(models.Model):
     NumProduct = models.IntegerField()
@@ -49,7 +49,7 @@ class OrderProductLine(models.Model):
     OrderID = models.ForeignKey('Order')
     ProductID = models.ForeignKey('Product')
     def __str__(self): 
-        return self.NumProduct
+        return str(self.NumProduct)
         
 class DeliveryService(models.Model):
     NameServis = models.CharField(max_length=30)
