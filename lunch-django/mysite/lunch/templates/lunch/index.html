@@ -1,0 +1,9 @@
+{% if latest_user_list %}
+    <ul>
+    {% for User in latest_user_list %}
+        <li><a href="/lunch/{{ User.id }}/">Name: {{ User.NameUser}} {{ User.SurnameUser}}, Login: {{ User.Login}}, Email: {{ User.Email}}</a></li> 
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
