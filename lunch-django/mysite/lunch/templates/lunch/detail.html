@@ -1,0 +1,6 @@
+﻿<h1>{{ user.SurnameUser }} {{ user.NameUser }}</h1>
+<ul>
+{% for cashmove in user.cashmove_set.all %}
+	<li><p>Order sum: {{ cashmove.AmountMoney }}$, Date order: {{ cashmove.DateCashMove }}</p> </li>
+{% endfor %}
+</ul>

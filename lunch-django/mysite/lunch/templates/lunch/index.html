@@ -1,9 +1,13 @@
+<h1>Список последних заказов</h1>
 {% if latest_user_list %}
     <ul>
     {% for User in latest_user_list %}
-        <li><a href="/lunch/{{ User.id }}/">Name: {{ User.NameUser}} {{ User.SurnameUser}}, Login: {{ User.Login}}, Email: {{ User.Email}}</a></li> 
+        <li><a href="{% url 'lunch:detail' User.id %}">Name: {{ User.NameUser}} {{ User.SurnameUser}}</a></li> 
     {% endfor %}
     </ul>
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
+
+<br>
+<p><a href = "#">Сделать новый заказ </p>
