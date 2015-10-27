@@ -1,13 +1,6 @@
-﻿<h1>{{ order.UserID.SurnameUser }} {{ order.UserID.NameUser }}</h1>
-<h2>{{ order.DateOrder }}</h2>
-<p>Login: {{ order.UserID.Login }} </p>
-<p>Email: {{ order.UserID.Email }}</p>
-
-{{ order.UserID.NameUser }}
-
-{% for orderproductline in order.orderproductline.all %}
-    <li>hi</li>
+﻿<h1>{{ user.SurnameUser }} {{ user.NameUser }}</h1>
+<ul>
+{% for cashmove in user.cashmove_set.all %}
+	<li><p>Order sum: {{ cashmove.AmountMoney }}$, Date order: {{ cashmove.DateCashMove }}</p> </li>
 {% endfor %}
-
-
-<p>Kolichestvo: {{ order.orderproductline.NumProduct }}</p>
+</ul>
