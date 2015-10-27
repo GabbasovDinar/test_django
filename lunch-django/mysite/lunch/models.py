@@ -41,7 +41,7 @@ class Order(models.Model):
     DateOrder = models.DateTimeField('date order product')
     UserID = models.ForeignKey('User')
     def __str__(self): 
-        return str(self.UserID)
+        return str(self.DateOrder)
     
 class OrderProductLine(models.Model):
     NumProduct = models.IntegerField()
