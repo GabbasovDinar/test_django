@@ -1,12 +1,12 @@
 <h1>Список последних заказов</h1>
-{% if latest_user_list %}
+{% if latest_order_list %}
     <ul>
-    {% for User in latest_user_list %}
-        <li><a href="{% url 'lunch:detail' User.id %}">Name: {{ User.NameUser}} {{ User.SurnameUser}}</a></li> 
+    {% for Order in latest_order_list %}
+        <li><a href="{% url 'lunch:detail' Order.id %}">Date order: {{ Order.DateOrder}}</a></li> 
     {% endfor %}
     </ul>
 {% else %}
-    <p>No polls are available.</p>
+    <p>No lunch are available.</p>
 {% endif %}
 
 <br>

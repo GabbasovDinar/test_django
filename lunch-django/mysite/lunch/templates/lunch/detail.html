@@ -1,6 +1,13 @@
-﻿<h1>{{ user.SurnameUser }} {{ user.NameUser }}</h1>
+﻿<h1>{{ order.UserID.SurnameUser }} {{ order.UserID.NameUser }}</h1>
+<h2>{{ order.DateOrder }}</h2>
+<p>Login: {{ order.UserID.Login }} </p>
+<p>Email: {{ order.UserID.Email }}</p>
+
+
 <ul>
-{% for cashmove in user.cashmove_set.all %}
-	<li><p>Order sum: {{ cashmove.AmountMoney }}$, Date order: {{ cashmove.DateCashMove }}</p> </li>
+{% for OrderProductLine in order.orderproductline_set.all %}
+    <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
+	в количестве  {{ OrderProductLine.NumProduct }} штук. Служба доставки: 
+	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}</li>
 {% endfor %}
 </ul>
