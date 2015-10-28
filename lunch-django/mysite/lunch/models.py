@@ -8,18 +8,23 @@ class User(models.Model):
     Login = models.CharField(max_length=100)
     Email = models.EmailField(max_length=100)
     Password = models.CharField(max_length=100)
-    RegistrationDate = models.DateTimeField('registration date')
+    RegistrationDate = models.DateTimeField(default=timezone.now)
     Authority = models.CharField(max_length=10)
     Balance = models.FloatField()
     RegistrationCheck = models.BooleanField()
+    
+    def regdate(self):
+        self.RegistrationDate = timezone.now()
+        self.save()
+        
     def __str__(self): 
         return self.NameUser
     
     
 class CashMove(models.Model):
     AmountMoney = models.FloatField()
-    DateCashMove = models.DateTimeField('date')
-    UserCash = models.ForeignKey('User')
+    DateCashMove = models.DateTimeField(default=timezone.now)
+    UserCash = models.ForeignKey('User')   
     def __str__(self): 
         return str(self.AmountMoney) 
     
@@ -40,6 +45,9 @@ class ProductCategory(models.Model):
 class Order(models.Model):
     DateOrder = models.DateTimeField('date order product')
     UserID = models.ForeignKey('User')
+    def orderdate(self):
+        self.DateOrder = timezone.now()
+        self.save()     
     def __str__(self): 
         return str(self.DateOrder)
     
