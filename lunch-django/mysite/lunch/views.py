@@ -13,13 +13,14 @@ def detail(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     return render(request, 'lunch/detail.html', {'order': order})
 
+def neworder(request):
+    latest_user_list = User.objects.order_by('NameUser')
+    context = {'latest_user_list': latest_user_list} 
+    return render(request, 'lunch/neworder.html', context)
+
 def results(request, order_id):
     response = "You're looking at the results of question %s."
     return HttpResponse(response % order_id)
-
-def userorder(request, order_id):
-    return HttpResponse("You're voting on question %s." % order_id)
-
 
 
 #def index(request):
