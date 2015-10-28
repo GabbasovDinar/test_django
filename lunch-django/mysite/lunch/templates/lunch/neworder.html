@@ -2,7 +2,7 @@
 
 <p>Любой запрос, который может изменить состояние системы - например, который изменяет данные в базе данных - должен использовать POST</p>
 
-<p>Список пользователей:<p>
+<p>Список пользователей:</p>
 {% if latest_user_list %}
     <ul>
     {% for User in latest_user_list %}
@@ -11,3 +11,22 @@
     </ul>
 {% endif %}
 
+<p>Список продуктов:</p>
+
+{% if latest_product_list %}
+    <ul>
+    {% for Product in latest_product_list %}
+        <li>{{ Product.NameProduct }} </li> 
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<p>Службы доставки:</p>
+
+{% if latest_delivery_list %}
+    <ul>
+    {% for DeliveryService in latest_delivery_list %}
+        <li>{{ DeliveryService.NameServis }} </li> 
+    {% endfor %}
+    </ul>
+{% endif %}

@@ -15,7 +15,10 @@ def detail(request, order_id):
 
 def neworder(request):
     latest_user_list = User.objects.order_by('NameUser')
-    context = {'latest_user_list': latest_user_list} 
+    latest_product_list = Product.objects.order_by('NameProduct')
+    latest_delivery_list = DeliveryService.objects.order_by('NameServis')
+    
+    context = {'latest_user_list': latest_user_list, 'latest_product_list': latest_product_list, 'latest_delivery_list': latest_delivery_list} 
     return render(request, 'lunch/neworder.html', context)
 
 def results(request, order_id):
