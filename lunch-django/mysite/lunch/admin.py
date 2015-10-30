@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import User, CashMove, ProductCategory, DeliveryService, Product, Order, OrderProductLine
+from .models import *
 
 class CashMoveInLine(admin.TabularInline):
     model = CashMove
-    extra = 3    
+    extra = 1    
 class PoductInLine(admin.TabularInline):
     model = Product
     extra = 3   

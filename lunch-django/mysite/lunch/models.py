@@ -11,12 +11,7 @@ class User(models.Model):
     RegistrationDate = models.DateTimeField(default=timezone.now)
     Authority = models.CharField(max_length=10)
     Balance = models.FloatField()
-    RegistrationCheck = models.BooleanField()
-    
-    def regdate(self):
-        self.RegistrationDate = timezone.now()
-        self.save()
-        
+    RegistrationCheck = models.BooleanField()   
     def __str__(self): 
         return self.NameUser
     
@@ -43,13 +38,13 @@ class ProductCategory(models.Model):
         return self.NameCategory   
     
 class Order(models.Model):
-    DateOrder = models.DateTimeField('date order product')
+    DateOrder = models.DateTimeField(blank=True, null=True)
     UserID = models.ForeignKey('User')
-    def orderdate(self):
+    def publishdate(self):
         self.DateOrder = timezone.now()
-        self.save()     
+        self.save()    
     def __str__(self): 
-        return str(self.DateOrder)
+        return str(self.UserID)
     
 class OrderProductLine(models.Model):
     NumProduct = models.IntegerField()
