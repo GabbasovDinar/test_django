@@ -1,6 +1,7 @@
 ﻿{% extends "lunch/base.html" %}
 
 {% block content %}
+<h4>{% if user.is_authenticated %}Привет, {{ user.username }}{% endif %}</h4>
 <h1>Последние заказы</h1>
 {% if latest_order_list %}
     <ul>

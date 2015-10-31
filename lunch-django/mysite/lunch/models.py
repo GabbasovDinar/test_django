@@ -4,13 +4,13 @@ from django.utils import timezone
 
 class User(models.Model):
     NameUser = models.CharField(max_length=100)
-    SurnameUser = models.CharField(max_length=100)
+    SurnameUser = models.CharField(max_length=100, blank=True)
     Login = models.CharField(max_length=100)
-    Email = models.EmailField(max_length=100)
+    Email = models.EmailField(max_length=100, blank=True)
     Password = models.CharField(max_length=100)
     RegistrationDate = models.DateTimeField(default=timezone.now)
-    Authority = models.CharField(max_length=10)
-    Balance = models.FloatField()
+    Authority = models.CharField(max_length=10, blank=True)
+    Balance = models.FloatField(blank=True)
     RegistrationCheck = models.BooleanField()   
     def __str__(self): 
         return self.NameUser
@@ -19,6 +19,9 @@ class User(models.Model):
 class CashMove(models.Model):
     AmountMoney = models.FloatField()
     DateCashMove = models.DateTimeField(default=timezone.now)
+    def Cashdate(self):
+        self.DateCashMove = timezone.now()
+        self.save()     
     UserCash = models.ForeignKey('User')   
     def __str__(self): 
         return str(self.AmountMoney) 
