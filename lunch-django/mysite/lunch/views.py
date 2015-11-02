@@ -11,32 +11,27 @@ def index(request):
 
 def order_list(request):
     latest_order_list = Order.objects.order_by('-DateOrder')[:5]
-    context = {'latest_order_list': latest_order_list}
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/lunch/login/')
+    context = {'latest_order_list': latest_order_list}     
     return render(request, 'lunch/order_list.html', context)
 
 def order_detail(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/lunch/login/')    
     return render(request, 'lunch/order_detail.html', {'order': order})
 
-def my_profile(request):
-    return render(request, 'lunch/profile.html')
-
 def order_new(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/lunch/login/')    
     if request.method == "POST":
         form = OrderForm(request.POST)
+        #pform = OrderProductLineForm(request.POST)
         if form.is_valid():
+            #orderproductline = pform.save(commit=False)
             order = form.save(commit=False)
             order.DateOrder = timezone.now()
             order.save()
+            #orderproductline.save()
             return redirect('lunch:order_detail',  order_id=order.id)
     else:
         form = OrderForm()
+        #pform = OrderProductLineForm
     return render(request, 'lunch/order_new.html', {'form': form})
 
 def log_in(request):
