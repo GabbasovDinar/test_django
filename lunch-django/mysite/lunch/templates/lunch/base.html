@@ -8,12 +8,29 @@
 	</head>
     <body>
 <div class="content container">
-            <div class="row">
-                <div class="col-md-8">
-                {% block content %}
-                {% endblock %}
-                </div>
-            </div>
-        </div>
-    </body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-8">
+				<a href="{% url 'lunch:order_list' %}">Главная страница</a>
+			</div>
+			<div class="col-md-4">
+			</div>
+		</div>
+	</div>
+	
+	<div class="content">
+		<div class="row">
+			<div class="col-md-8">
+				{% block content %}
+				{% endblock %}
+			</div>
+			<div class="col-md-4">
+				<div class="logoutaccount">
+					<a href = "{% url 'lunch:logout' %}" >Выход</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
 </html>

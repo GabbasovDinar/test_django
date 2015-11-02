@@ -46,33 +46,3 @@ class RegistrationForm(forms.Form):
         password2 = self.cleaned_data.get('password2')
         return self.cleaned_data
         
-#class CashMoveForm(forms.ModelForm):
-    #class Meta:
-        #model = CashMove 
-        #fields = '__all__'
-        
-        
-#class ProductForm(forms.ModelForm):
-    #class Meta:
-        #model = Product 
-        #fields = '__all__'
-        
-#class ProductCategoryForm(forms.ModelForm):
-    #class Meta:
-        #model = ProductCategory 
-        #fields = '__all__'
-        
-#class OrderForm(forms.ModelForm):
-    #class Meta:
-        #model = Order 
-        #fields = '__all__'
-    
-class OrderProductLineForm(forms.ModelForm):
-    class Meta:
-        model = OrderProductLine 
-        fields = '__all__'
-            
-#class DeliveryServiceForm(forms.ModelForm):
-    #class Meta:
-        #model = DeliveryService
-        #fields = '__all__'

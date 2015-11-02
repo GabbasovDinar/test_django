@@ -2,17 +2,22 @@
 
 {% block content %}
 <h4>{% if user.is_authenticated %}Привет, {{ user.username }}{% endif %}</h4>
-<h1>Последние заказы</h1>
-{% if latest_order_list %}
-    <ul>
-    {% for Order in latest_order_list %}
-        <li><a href="{% url 'lunch:order_detail' Order.id %}">Date order: {{ Order.DateOrder}}</a></li> 
-    {% endfor %}
-    </ul>
-{% else %}
+
+<div class="Order">
+	<h1>Последние заказы</h1>
+		{% if latest_order_list %}
+			<ul>
+			{% for Order in latest_order_list %}
+				<li><a href="{% url 'lunch:order_detail' Order.id %}">Date order: {{ Order.DateOrder}}</a></li> 
+			{% endfor %}
+			</ul>
+		{% else %}
     <p>No lunch are available.</p>
 {% endif %}	
-<br>
-<p><a href = "{% url 'lunch:order_new' %}">Сделать новый заказ </p>
+</div>
+
+<div class="myaccount">
+	<p><a href = "{% url 'lunch:my_profile' %}">Личный кабинет </p>
+</div>
 
 {% endblock content %}
