@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '5n+-n9azj($k08q3fiu6qsdxnl+a18ah*0*!0%pp9%--i)qket'
+SECRET_KEY = 'vec6)6^m_ik!=jf8a5=ip6ls7cxafzn6kw_ifrz(6lb)ek&zn8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'preg'
+    'lunch',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -70,7 +70,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
-AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
