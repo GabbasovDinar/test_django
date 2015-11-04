@@ -1,24 +1,25 @@
 from django.contrib import admin
-from .models import *
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
+from .models import *
  
 class PoductInLine(admin.TabularInline):
     model = Product
     extra = 3   
+    
 class OrderProductLineInLine(admin.TabularInline):
     model = OrderProductLine
     extra = 3    
     
-class UserAdmin(admin.ModelAdmin):
-    fieldsets = [
-            (None,               {'fields': ['Login', 'Password', 'RegistrationCheck']}),
-            ('Registration', {'fields': ['NameUser', 'SurnameUser', 'Email', 'RegistrationDate', 'Authority', 'Balance'], 'classes': ['collapse']}),
-    ]
-    inlines = [CashMoveInLine]
-    list_display = ('Login', 'NameUser', 'RegistrationDate')
-    list_filter = ['RegistrationDate']
-    search_fields = ['Login']
-    
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'profile'
+
+class UserAdmin(UserAdmin):
+    inlines = (UserProfileInline, )
+
 class ProductCategoryAdmin(admin.ModelAdmin):
     fields = ['NameCategory']
     inlines = [PoductInLine]
@@ -35,8 +36,16 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('UserID', 'DateOrder')
     search_fields = ['UserID']    
     list_filter = ['DateOrder']
-   
+
+class CashMoveAdmin(admin.ModelAdmin):
+    fields = ['UserCash', 'DateCashMove', 'AmountMoney']
+    list_display = ('UserCash', 'DateCashMove')
+    search_fields = ['UserCash']    
+    list_filter = ['DateCashMove']    
+    
+admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+admin.site.register(CashMove, CashMoveAdmin)
 admin.site.register(ProductCategory, ProductCategoryAdmin)
 admin.site.register(DeliveryService, DeliveryServiceAdmin)
 admin.site.register(Order, OrderAdmin)

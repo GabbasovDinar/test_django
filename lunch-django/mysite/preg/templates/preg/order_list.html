@@ -1,4 +1,4 @@
-﻿{% extends "lunch/base.html" %}
+﻿{% extends "preg/base.html" %}
 
 {% block content %}
 <h4>{% if user.is_authenticated %}Привет, {{ user.username }}{% endif %}</h4>
@@ -8,16 +8,16 @@
 		{% if latest_order_list %}
 			<ul>
 			{% for Order in latest_order_list %}
-				<li><a href="{% url 'lunch:order_detail' Order.id %}">Date order: {{ Order.DateOrder}}</a></li> 
+				<li><a href="{% url 'preg:order_detail' Order.id %}">Date order: {{ Order.DateOrder}}</a></li> 
 			{% endfor %}
 			</ul>
 		{% else %}
-    <p>No lunch are available.</p>
+    <p>No preg are available.</p>
 {% endif %}	
 </div>
 
 <div class="myaccount">
-	<p><a href = "{% url 'lunch:my_profile' %}">Личный кабинет </p>
+	<p><a href = "{% url 'preg:my_profile' %}">Личный кабинет </p>
 </div>
 
 {% endblock content %}

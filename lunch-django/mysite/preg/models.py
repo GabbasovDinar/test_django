@@ -1,20 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import User, UserManager
+from django.db.models.signals import post_save
 import datetime
 from django.utils import timezone
 
-class User(models.Model):
-    NameUser = models.CharField(max_length=100)
-    SurnameUser = models.CharField(max_length=100, blank=True)
-    Login = models.CharField(max_length=100)
-    Email = models.EmailField(max_length=100, blank=True)
-    Password = models.CharField(max_length=100)
-    RegistrationDate = models.DateTimeField(default=timezone.now)
-    Authority = models.CharField(max_length=10, blank=True)
-    Balance = models.FloatField(blank=True)
-    RegistrationCheck = models.BooleanField()   
-    def __str__(self): 
-        return self.NameUser
-    
+
+class UserProfile(models.Model):
+    # This field is required.
+    user = models.OneToOneField(User)
+
+    # Other fields here
+    balance = models.IntegerField(default=0)
+    #objects = UserManager()
+    def __str__(self):
+        return str(self.user.username)
     
 class CashMove(models.Model):
     AmountMoney = models.FloatField()
@@ -22,9 +21,10 @@ class CashMove(models.Model):
     def Cashdate(self):
         self.DateCashMove = timezone.now()
         self.save()     
-    UserCash = models.ForeignKey('User')   
+    UserCash = models.ForeignKey('UserProfile')   
     def __str__(self): 
         return str(self.AmountMoney) 
+    
     
     
 class Product(models.Model):
@@ -42,7 +42,7 @@ class ProductCategory(models.Model):
     
 class Order(models.Model):
     DateOrder = models.DateTimeField(blank=True, null=True)
-    UserID = models.ForeignKey('User')
+    UserID = models.ForeignKey('UserProfile')
     def publishdate(self):
         self.DateOrder = timezone.now()
         self.save()    
@@ -62,3 +62,8 @@ class DeliveryService(models.Model):
     Telephone = models.CharField(max_length=30)
     def __str__(self): 
         return self.NameServis 
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+post_save.connect(create_user_profile, sender=User)

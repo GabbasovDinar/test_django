@@ -1,4 +1,4 @@
-﻿{% extends "lunch/base.html" %}
+﻿{% extends "preg/base.html" %}
 {% block content %}
 		<p>Добро пожаловать в личный кабинет!</p>	
 		<div class="profile">
@@ -49,7 +49,7 @@
 			{% endif %}
 			</div>	
 			<div class="new_order">
-				<a href="{% url 'lunch:order_new' %}">Сделать новый заказ </a>
+				<a href="{% url 'preg:order_new' %}">Сделать новый заказ </a>
 			</div>	
 			<div class="history_of_orders">
 				<h1>Мои заказы</h1>
