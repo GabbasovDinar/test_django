@@ -17,6 +17,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^lunch/', include('lunch.urls', namespace="lunch")),
+    url(r'^preg/', include('preg.urls', namespace="preg")),
     url(r'^admin/', include(admin.site.urls)),
 ]
