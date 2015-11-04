@@ -1,0 +1,10 @@
+﻿{% extends "lunch/base.html" %}
+{% block content %}
+		<div class="order_this_product">
+			<h1>Заказать</h1>
+			<form method="POST" class="post-form">{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit" class="save btn btn-default">Save</button>
+			</form>
+		</div>	
+{% endblock %}
