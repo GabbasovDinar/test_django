@@ -26,24 +26,39 @@ def order_detail(request, order_id):
     return render(request, 'preg/order_detail.html', {'order': order})
 
 def my_profile(request):
-    order_list = Order.objects.order_by('-DateOrder')[:5]
+    if request.user.is_authenticated():
+        WhoUser=request.user
+        order_list = Order.objects.filter(UserID__user__username=WhoUser).order_by('-DateOrder')
+        cash_list = CashMove.objects.filter(UserCash__user__username=WhoUser).order_by('-DateCashMove')
+        context = {'order_list': order_list, 'cash_list':cash_list}
+        return render(request, 'preg/profile.html', context)
+    else:
+        return HttpResponseRedirect('/preg/login/')  
+    
+def user_order_detail(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/preg/login/')      
-    return render(request, 'preg/profile.html')
+        return HttpResponseRedirect('/preg/login/') 
+    return render(request, 'preg/user_order_detail.html', {'order': order})
 
 def order_new(request):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/preg/login/')    
+        return HttpResponseRedirect('/preg/login/') 
     if request.method == "POST":
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            order = form.save(commit=False)
+        oform = OrderForm(request.POST)
+        pform = ProductForm(request.POST)
+        if oform.is_valid() and pform.is_valid():
+            order = oform.save(commit=False)
             order.DateOrder = timezone.now()
             order.save()
+            product = pform.save(commit=False)
+            product.OrderID = order.id
+            product.save()
             return redirect('preg:order_detail',  order_id=order.id)
     else:
-        form = OrderForm()
-    return render(request, 'preg/order_new.html', {'form': form})
+        oform = OrderForm()
+        pform = ProductForm()
+    return render(request, 'preg/order_new.html', {'oform': oform, 'pform': pform})
 
 def log_in(request):
     if request.method == 'POST':

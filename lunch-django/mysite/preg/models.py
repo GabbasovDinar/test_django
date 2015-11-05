@@ -9,9 +9,7 @@ class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(User)
 
-    # Other fields here
     balance = models.IntegerField(default=0)
-    #objects = UserManager()
     def __str__(self):
         return str(self.user.username)
     

@@ -2,11 +2,17 @@ from django import forms
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+
 class OrderForm(forms.ModelForm):
-    
     class Meta:
         model = Order
         exclude = ['DateOrder']
+         
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = OrderProductLine
+        exclude = ['OrderID']
+        
 class LoginForm(forms.Form):
     username = forms.CharField(label=u'name user')
     password = forms.CharField(label=u'password', widget=forms.PasswordInput)
@@ -29,15 +35,18 @@ class RegistrationForm(forms.Form):
     password1 = forms.CharField(label=u'Password', widget=forms.PasswordInput, error_messages={'required': 'Enter the password'}, min_length=4, max_length=30)
     password2 = forms.CharField(label=u'Repeat password', widget=forms.PasswordInput, error_messages={'required': 'Enter the password again'})
 
-    #def clean_username(self):
-        #username = self.cleaned_data.get('username')
-        ## new or old user???????
-        #return self.cleaned_data
-
     def clean_pass2(self):
-        if (self.cleaned_data["password2"]!=self.cleaned_data.get("password1", "")):
+        data = self.cleaned_data
+        if (data["password2"]!=data.get("password1", "")):
             raise forms.ValidationError("password no match")
-        return self.cleaned_data["password2"]
-            
-    
-        
+        return data["password2"]
+
+    def clean_username(self):
+        data = self.cleaned_data
+        try:
+            User.objects.get(username = data['username'])
+        except User.DoesNotExist:
+            return data['username']
+        raise forms.ValidationError('This username is already taken.') 
+
+

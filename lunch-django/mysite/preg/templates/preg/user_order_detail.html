@@ -1,0 +1,19 @@
+﻿{% extends "preg/base.html" %}
+{% block content %}
+
+
+
+
+<p>Дата заказа: {{ order.DateOrder }}</p>
+<ul>
+{% for OrderProductLine in order.orderproductline_set.all %}
+    <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
+	в количестве  {{ OrderProductLine.NumProduct }} штук. Стоимость продукта:  {{ OrderProductLine.ProductID.Price }} за шт. Служба доставки: 
+	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}
+	</li>
+{% endfor %}
+</ul>
+<p>Сегодня потрачено: ???? $</p>
+<p><a href="{% url 'preg:my_profile' %}">Назад</a></p>
+
+{% endblock %}

@@ -1,9 +1,11 @@
 ﻿{% extends "preg/base.html" %}
 {% block content %}
-		<p>Добро пожаловать в личный кабинет!</p>	
+		<p>Добро пожаловать в личный кабинет!</p>
+		{% if user.is_authenticated %}
 		<div class="profile">
+		
 			<h1>Мой профиль</h1>
-			{% if user.is_authenticated %}
+			
 			<table>
 				<tr>
 					<td>Логин: </td> 
@@ -44,14 +46,37 @@
 					<td>Дата регистрации: </td> 
 					<td>{{ user.date_joined }}</td>
 				</tr>
-				
 			</table>
-			{% endif %}
+			
 			</div>	
 			<div class="new_order">
 				<a href="{% url 'preg:order_new' %}">Сделать новый заказ </a>
 			</div>	
-			<div class="history_of_orders">
+
 				<h1>Мои заказы</h1>
-			</div>			
+				{% if order_list %}
+					<ul>
+						{% for Order in order_list %}
+							<li><a href="{% url 'preg:user_order_detail' Order.id%}">Date order: {{ Order.DateOrder}}</a></li> 
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p>No preg are available.</p>
+
+			{% endif %}
+			<h1>Движение денег</h1>
+							{% if cash_list %}
+					<ul>
+						{% for CashMove in cash_list %}
+							<li><p>{{ CashMove.AmountMoney }} $</p></li> 
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p>No preg are available.</p>
+
+			{% endif %}
+			{% endif %}	
+			
+			
+			
 {% endblock %}
