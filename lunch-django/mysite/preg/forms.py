@@ -13,6 +13,16 @@ class ProductForm(forms.ModelForm):
         model = OrderProductLine
         exclude = ['OrderID']
         
+class CashMoveForm(forms.ModelForm):
+    class Meta:
+        model = CashMove
+        exclude='__all__'
+        
+class ProfilEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        
 class LoginForm(forms.Form):
     username = forms.CharField(label=u'name user')
     password = forms.CharField(label=u'password', widget=forms.PasswordInput)

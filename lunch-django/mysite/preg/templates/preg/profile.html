@@ -5,7 +5,8 @@
 		<div class="profile">
 		
 			<h1>Мой профиль</h1>
-			
+			<a href="{% url 'preg:edit_profile'%} ">Редактировать профить</a>
+			<br>
 			<table>
 				<tr>
 					<td>Логин: </td> 
@@ -64,17 +65,20 @@
 					<p>No preg are available.</p>
 
 			{% endif %}
+			
+			
+			<div class="cash">
 			<h1>Движение денег</h1>
-							{% if cash_list %}
-					<ul>
+			{% if cash_list %}
+					<ul class="tableCash">
 						{% for CashMove in cash_list %}
 							<li><p>{{ CashMove.AmountMoney }} $</p></li> 
 						{% endfor %}
 					</ul>
 				{% else %}
 					<p>No preg are available.</p>
-
 			{% endif %}
+			</div>
 			{% endif %}	
 			
 			

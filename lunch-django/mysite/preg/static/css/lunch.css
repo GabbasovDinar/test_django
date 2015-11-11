@@ -1,3 +1,26 @@
 a {
         color: #FCA205;
     }
+.index  {
+	background-color: aliceblue;
+	padding: 30px;
+	text-align: center;
+	font-size: 30px;
+}
+
+.logoutaccount {
+	text-align: right;
+}
+
+.cash {
+	padding-bottom: 50px;
+	
+}
+
+.cash h1{
+	padding-bottom: 50px;
+	font-size: 20px;
+}
+.tableCash {
+	margin-top: -50px;
+}

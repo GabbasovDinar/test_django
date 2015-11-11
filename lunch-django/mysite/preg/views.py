@@ -52,13 +52,32 @@ def order_new(request):
             order.DateOrder = timezone.now()
             order.save()
             product = pform.save(commit=False)
-            product.OrderID = order.id
+            product.OrderID = order
             product.save()
             return redirect('preg:order_detail',  order_id=order.id)
     else:
         oform = OrderForm()
         pform = ProductForm()
+        
+    user_list = User.objects.order_by('username')
+    user_list = len(user_list)
+    WhoUser=request.user
+    #num_product = 
+    
     return render(request, 'preg/order_new.html', {'oform': oform, 'pform': pform})
+
+def edit_profile(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/preg/login/')
+    if request.method == "POST":
+        form = ProfilEditForm(request.POST)
+        if form.is_valid():
+            request.user.save()
+            return HttpResponseRedirect('/preg/order/profile/')
+    else:
+        form = ProfilEditForm()   
+    return render(request, 'preg/edit.html', {'form': form})
+
 
 def log_in(request):
     if request.method == 'POST':
