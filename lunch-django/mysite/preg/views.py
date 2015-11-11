@@ -44,12 +44,14 @@ def user_order_detail(request, order_id):
 def order_new(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/') 
+    #user = User.objects.get(id=user.id)
     if request.method == "POST":
         oform = OrderForm(request.POST)
         pform = ProductForm(request.POST)
         if oform.is_valid() and pform.is_valid():
             order = oform.save(commit=False)
             order.DateOrder = timezone.now()
+            order.UserID = request.user #error!!!!!!!
             order.save()
             product = pform.save(commit=False)
             product.OrderID = order
