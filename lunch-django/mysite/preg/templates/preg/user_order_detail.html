@@ -9,7 +9,7 @@
 {% for OrderProductLine in order.orderproductline_set.all %}
     <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Стоимость продукта:  {{ OrderProductLine.ProductID.Price }} за шт. Служба доставки: 
-	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}
+	{{ OrderProductLine.ProductID.DeliveryID.NameServis }} 
 	</li>
 {% endfor %}
 </ul>

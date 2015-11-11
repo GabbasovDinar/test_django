@@ -5,8 +5,9 @@
 		<div class="profile">
 		
 			<h1>Мой профиль</h1>
-			<a href="{% url 'preg:edit_profile'%} ">Редактировать профить</a>
-			<br>
+			<a class="btn btn-default" href="{% url 'preg:edit_profile' %}"><span class="glyphicon glyphicon-pencil"> profile</span></a>
+			<a class="btn btn-default" href="{% url 'preg:edit_pass' %}"><span class="glyphicon glyphicon-pencil"> password</span></a>
+
 			<table>
 				<tr>
 					<td>Логин: </td> 

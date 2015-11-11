@@ -24,3 +24,7 @@ a {
 .tableCash {
 	margin-top: -50px;
 }
+
+.balance p {
+	margin-bottom: -2px;
+}

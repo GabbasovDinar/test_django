@@ -51,7 +51,7 @@ def order_new(request):
         if oform.is_valid() and pform.is_valid():
             order = oform.save(commit=False)
             order.DateOrder = timezone.now()
-            order.UserID = request.user #error!!!!!!!
+            #order.UserID = request.user #error!!!!!!!
             order.save()
             product = pform.save(commit=False)
             product.OrderID = order
@@ -61,24 +61,44 @@ def order_new(request):
         oform = OrderForm()
         pform = ProductForm()
         
+        
     user_list = User.objects.order_by('username')
     user_list = len(user_list)
     WhoUser=request.user
     #num_product = 
-    
+    my_balance = UserProfile.objects.filter(user__username=WhoUser).order_by('balance')
     return render(request, 'preg/order_new.html', {'oform': oform, 'pform': pform})
 
 def edit_profile(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/')
+    username = request.user.username
+    user = get_object_or_404(User, username=username)
     if request.method == "POST":
-        form = ProfilEditForm(request.POST)
+        form = ProfilEditForm(request.POST or None, instance=request.user)
         if form.is_valid():
-            request.user.save()
+            form.save()
             return HttpResponseRedirect('/preg/order/profile/')
     else:
         form = ProfilEditForm()   
     return render(request, 'preg/edit.html', {'form': form})
+
+def edit_pass(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/preg/login/')
+    username = request.user.username
+    user = get_object_or_404(User, username=username)
+    if request.method == "POST":
+        form = PassEditForm(request.POST or None)
+        if form.is_valid():
+            user.set_password(form.cleaned_data['password1'])
+            user.save()
+            user = authenticate(username = username, password = form.cleaned_data['password1'])
+            login(request, user)            
+            return HttpResponseRedirect('/preg/order/profile/')
+    else:
+        form = PassEditForm()
+    return render(request, 'preg/edit_pass.html', {'form': form})
 
 
 def log_in(request):

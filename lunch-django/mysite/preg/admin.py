@@ -31,9 +31,9 @@ class DeliveryServiceAdmin(admin.ModelAdmin):
     search_fields = ['NameServis']
   
 class OrderAdmin(admin.ModelAdmin):
-    fields = ['UserID', 'DateOrder']
+    fields = ['UserID', 'DateOrder', 'ConfirmationOrder']
     inlines = [OrderProductLineInLine]
-    list_display = ('UserID', 'DateOrder')
+    list_display = ('UserID', 'DateOrder','ConfirmationOrder')
     search_fields = ['UserID']    
     list_filter = ['DateOrder']
 

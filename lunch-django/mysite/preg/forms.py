@@ -22,6 +22,15 @@ class ProfilEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
+    
+class PassEditForm(forms.Form):
+    password1 = forms.CharField(label=u'Password', widget=forms.PasswordInput, error_messages={'required': 'Enter the password'}, min_length=4, max_length=30)
+    password2 = forms.CharField(label=u'Repeat password', widget=forms.PasswordInput, error_messages={'required': 'Enter the password again'})    
+    def clean(self):
+        data = self.cleaned_data
+        if (data["password2"]!=data.get("password1", "")):
+            raise forms.ValidationError("password no match")
+        return data 
         
 class LoginForm(forms.Form):
     username = forms.CharField(label=u'name user')
@@ -45,18 +54,13 @@ class RegistrationForm(forms.Form):
     password1 = forms.CharField(label=u'Password', widget=forms.PasswordInput, error_messages={'required': 'Enter the password'}, min_length=4, max_length=30)
     password2 = forms.CharField(label=u'Repeat password', widget=forms.PasswordInput, error_messages={'required': 'Enter the password again'})
 
-    def clean_pass2(self):
-        data = self.cleaned_data
-        if (data["password2"]!=data.get("password1", "")):
+    def clean(self):
+        cleaned_data = super(RegistrationForm, self).clean()
+        if (cleaned_data["password2"]!=cleaned_data .get("password1", "")):
             raise forms.ValidationError("password no match")
-        return data["password2"]
-
-    def clean_username(self):
-        data = self.cleaned_data
-        try:
-            User.objects.get(username = data['username'])
-        except User.DoesNotExist:
-            return data['username']
-        raise forms.ValidationError('This username is already taken.') 
-
-
+        else:
+            try:
+                User.objects.get(username = cleaned_data['username'])
+            except User.DoesNotExist:
+                return cleaned_data
+            raise forms.ValidationError('This username is already taken.')
