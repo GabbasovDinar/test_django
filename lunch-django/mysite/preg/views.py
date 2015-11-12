@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import auth
 from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
+from django.forms.formsets import formset_factory
 
 def index(request):
     return render(request, 'preg/index.html')
@@ -44,14 +45,14 @@ def user_order_detail(request, order_id):
 def order_new(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/') 
-    #user = User.objects.get(id=user.id)
+    ProductFormSet = formset_factory(ProductForm, extra=3)
     if request.method == "POST":
         oform = OrderForm(request.POST)
         pform = ProductForm(request.POST)
         if oform.is_valid() and pform.is_valid():
             order = oform.save(commit=False)
             order.DateOrder = timezone.now()
-            #order.UserID = request.user #error!!!!!!!
+            order.UserID = request.user.userprofile 
             order.save()
             product = pform.save(commit=False)
             product.OrderID = order
@@ -59,15 +60,14 @@ def order_new(request):
             return redirect('preg:order_detail',  order_id=order.id)
     else:
         oform = OrderForm()
-        pform = ProductForm()
-        
+        pform = ProductFormSet()
         
     user_list = User.objects.order_by('username')
     user_list = len(user_list)
     WhoUser=request.user
     #num_product = 
     my_balance = UserProfile.objects.filter(user__username=WhoUser).order_by('balance')
-    return render(request, 'preg/order_new.html', {'oform': oform, 'pform': pform})
+    return render(request, 'preg/order_new.html', {'pform': pform})
 
 def edit_profile(request):
     if not request.user.is_authenticated():
@@ -116,12 +116,18 @@ def register(request):
     user=User()
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        if form.is_valid():
+        cform = CashUserForm(request.POST)
+        if form.is_valid() and cform.is_valid():
             user.username = form.cleaned_data['username']
             user.set_password(form.cleaned_data['password1'])
             user.save()
             user = authenticate(username = form.cleaned_data['username'], password = form.cleaned_data['password1'])
             login(request, user)
+            cashmove = cform.save(commit=False)
+            cashmove.DateCashMove = timezone.now()
+            cashmove.AmountMoney = float('0')
+            cashmove.UserCash = request.user.userprofile             
+            cashmove.save()
             return HttpResponseRedirect('/preg/order/')
     else:
         form = RegistrationForm()

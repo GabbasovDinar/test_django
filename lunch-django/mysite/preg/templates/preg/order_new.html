@@ -3,13 +3,11 @@
 		<div class="order_this_product">
 			<h1>Заказать</h1>
 			{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-			<form method="POST" class="post-form">
-			{% csrf_token %}
-				{{ oform.as_p }}
-				{{ pform.as_p }}
-			<p>Служба доставки: </p>
-			<p> Номер телефона: </p>
+				<form method="post" action="">
+						{% csrf_token %}
+						{{ pform.as_p}}
 				<button type="submit" class="save btn btn-default">Save</button>
-			</form>
+				</form>
+				
 		</div>	
 {% endblock %}

@@ -6,13 +6,18 @@ from django.contrib.auth import authenticate
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        exclude = ['DateOrder']
+        exclude = ['DateOrder', 'UserID']
          
 class ProductForm(forms.ModelForm):
     class Meta:
         model = OrderProductLine
         exclude = ['OrderID']
-        
+    #def clean(self):
+        #data = self.cleaned_data
+        #if (data["NumProduct"]<0):
+            #raise forms.ValidationError("Number of products can not be negative")
+        #return data 
+             
 class CashMoveForm(forms.ModelForm):
     class Meta:
         model = CashMove
@@ -64,3 +69,8 @@ class RegistrationForm(forms.Form):
             except User.DoesNotExist:
                 return cleaned_data
             raise forms.ValidationError('This username is already taken.')
+        
+class CashUserForm(forms.ModelForm):
+    class Meta:
+        model = CashMove
+        exclude = ['AmountMoney', 'DateCashMove', 'UserCash']

@@ -20,7 +20,8 @@ class CashMove(models.Model):
     UserCash = models.ForeignKey('UserProfile')   
     def __str__(self): 
         return str(self.AmountMoney) 
-   
+    
+    
     
 class Product(models.Model):
     NameProduct = models.CharField(max_length=30)
@@ -38,7 +39,6 @@ class ProductCategory(models.Model):
 class Order(models.Model):
     DateOrder = models.DateTimeField(blank=True, null=True)
     UserID = models.ForeignKey('UserProfile')
-    ConfirmationOrder = models.BooleanField()
     def publishdate(self):
         self.DateOrder = timezone.now()
         self.save()    
@@ -62,5 +62,4 @@ class DeliveryService(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-        
 post_save.connect(create_user_profile, sender=User)

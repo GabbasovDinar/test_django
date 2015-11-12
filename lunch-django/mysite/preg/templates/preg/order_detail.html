@@ -11,7 +11,7 @@
 {% for OrderProductLine in order.orderproductline_set.all %}
     <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Служба доставки: 
-	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}</li>
+	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }}</li>
 {% endfor %}
 </ul>
 <br>

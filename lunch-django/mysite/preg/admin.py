@@ -31,9 +31,9 @@ class DeliveryServiceAdmin(admin.ModelAdmin):
     search_fields = ['NameServis']
   
 class OrderAdmin(admin.ModelAdmin):
-    fields = ['UserID', 'DateOrder', 'ConfirmationOrder']
+    fields = ['UserID', 'DateOrder']
     inlines = [OrderProductLineInLine]
-    list_display = ('UserID', 'DateOrder','ConfirmationOrder')
+    list_display = ('UserID', 'DateOrder')
     search_fields = ['UserID']    
     list_filter = ['DateOrder']
 
@@ -49,4 +49,3 @@ admin.site.register(CashMove, CashMoveAdmin)
 admin.site.register(ProductCategory, ProductCategoryAdmin)
 admin.site.register(DeliveryService, DeliveryServiceAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderProductLine)
