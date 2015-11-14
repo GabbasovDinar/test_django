@@ -4,11 +4,21 @@
 <h4>{% if user.is_authenticated %}Привет, {{ user.username }}{% endif %}</h4>
 
 <div class="Order">
-	<h1>Последние заказы</h1>
-		{% if latest_order_list %}
+	<h1>Последние полученные заказы</h1>
+		{% if latest_order_list_true %}
 			<ul>
-			{% for Order in latest_order_list %}
-				<li><a href="{% url 'preg:order_detail' Order.id %}">Date order: {{ Order.DateOrder}}</a></li> 
+			{% for OrderConfirmation in latest_order_list_true %}
+				<li><a href="{% url 'preg:order_detail' OrderConfirmation.id %}">Дата доставки: {{ OrderConfirmation.DateConfirmation}}</a></li> 
+			{% endfor %}
+			</ul>
+		{% else %}
+    <p>No preg are available.</p>
+{% endif %}	
+	<h1>Последние заказы</h1>
+		{% if latest_order_list_false %}
+			<ul>
+			{% for OrderConfirmation in latest_order_list_false %}
+				<li><a href="{% url 'preg:order_detail' OrderConfirmation.id %}">Дата заказа: {{ OrderConfirmation.DateConfirmation}}</a></li> 
 			{% endfor %}
 			</ul>
 		{% else %}

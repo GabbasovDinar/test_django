@@ -29,7 +29,7 @@ class Product(models.Model):
     DeliveryID = models.ForeignKey('DeliveryService')
     ProductCategoryID = models.ForeignKey('ProductCategory')
     def __str__(self): 
-        return self.NameProduct      
+        return self.NameProduct    
     
 class ProductCategory(models.Model):
     NameCategory = models.CharField(max_length=30)
@@ -44,6 +44,16 @@ class Order(models.Model):
         self.save()    
     def __str__(self): 
         return str(self.UserID)
+    
+class OrderConfirmation(models.Model):
+    Confirmation = models.BooleanField()
+    DateConfirmation = models.DateTimeField(blank=True, null=True)
+    ConfirmationOrderID = models.OneToOneField('Order')
+    def confirmationdate(self):
+        self.DateConfirmation = timezone.now()
+        self.save()
+    def __str__(self):
+        return str(self.Confirmation)
     
 class OrderProductLine(models.Model):
     NumProduct = models.IntegerField()

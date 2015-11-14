@@ -56,10 +56,10 @@
 			</div>	
 
 				<h1>Мои заказы</h1>
-				{% if order_list %}
+				{% if confirmation_list %}
 					<ul>
-						{% for Order in order_list %}
-							<li><a href="{% url 'preg:user_order_detail' Order.id%}">Date order: {{ Order.DateOrder}}</a></li> 
+						{% for Order in confirmation_list %}
+							<li><a href="{% url 'preg:user_order_detail' Order.id%}">Date order: {{ Order.DateConfirmation}}</a></li> 
 						{% endfor %}
 					</ul>
 				{% else %}

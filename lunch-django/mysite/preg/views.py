@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User, UserManager
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
@@ -14,30 +13,55 @@ def index(request):
     return render(request, 'preg/index.html')
 
 def order_list(request):
-    latest_order_list = Order.objects.order_by('-DateOrder')[:5]
-    context = {'latest_order_list': latest_order_list}
+    latest_order_list_true = OrderConfirmation.objects.filter(Confirmation="True").order_by('-DateConfirmation')[:5]
+    latest_order_list_false = OrderConfirmation.objects.filter(Confirmation="").order_by('-DateConfirmation')[:5]
+    context = {'latest_order_list_true': latest_order_list_true, 'latest_order_list_false': latest_order_list_false}
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/')
     return render(request, 'preg/order_list.html', context)
 
 def order_detail(request, order_id):
-    order = get_object_or_404(Order, pk=order_id)
+    order = get_object_or_404(OrderConfirmation, pk=order_id)
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/')    
     return render(request, 'preg/order_detail.html', {'order': order})
 
+
+def confirmation_order(request, confirmation_id):
+    order = get_object_or_404(Order, pk=confirmation_id)
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/preg/login/') 
+    if request.method == "POST":
+        form = OrderConfirmationForm(request.POST)
+        if form.is_valid():
+            confirmation = form.save(commit=False)
+            confirmation.DateConfirmation = timezone.now()
+            confirmation.ConfirmationOrderID = order
+            confirmation.save()
+            user_list = User.objects.order_by('username')
+            user_list = len(user_list)
+            WhoUser=request.user
+            my_balance = 0            
+            return redirect('preg:order_detail',  order_id=confirmation.id)
+    else:
+        form = OrderConfirmationForm()
+    return render(request, 'preg/confirmation_order.html', {'order': order, 'form': form})
+
+
 def my_profile(request):
     if request.user.is_authenticated():
         WhoUser=request.user
-        order_list = Order.objects.filter(UserID__user__username=WhoUser).order_by('-DateOrder')
+        confirmation_list = OrderConfirmation.objects.filter(ConfirmationOrderID__UserID__user__username=WhoUser).order_by('-DateConfirmation')
+        #order_list = Order.objects.filter(UserID__user__username=WhoUser).order_by('-DateOrder')
         cash_list = CashMove.objects.filter(UserCash__user__username=WhoUser).order_by('-DateCashMove')
-        context = {'order_list': order_list, 'cash_list':cash_list}
+        #context = {'order_list': order_list, 'cash_list':cash_list, 'confirmation_list':confirmation_list}
+        context = {'cash_list':cash_list, 'confirmation_list':confirmation_list}
         return render(request, 'preg/profile.html', context)
     else:
         return HttpResponseRedirect('/preg/login/')  
     
-def user_order_detail(request, order_id):
-    order = get_object_or_404(Order, pk=order_id)
+def user_order_detail(request, confirmation_id):
+    order = get_object_or_404(OrderConfirmation, pk=confirmation_id)
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/') 
     return render(request, 'preg/user_order_detail.html', {'order': order})
@@ -45,10 +69,11 @@ def user_order_detail(request, order_id):
 def order_new(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/') 
-    ProductFormSet = formset_factory(ProductForm, extra=3)
+    #ProductFormSet = formset_factory(ProductForm, extra=3)
     if request.method == "POST":
         oform = OrderForm(request.POST)
         pform = ProductForm(request.POST)
+        #pform = ProductFormSet(request.POST)
         if oform.is_valid() and pform.is_valid():
             order = oform.save(commit=False)
             order.DateOrder = timezone.now()
@@ -57,17 +82,15 @@ def order_new(request):
             product = pform.save(commit=False)
             product.OrderID = order
             product.save()
-            return redirect('preg:order_detail',  order_id=order.id)
+            return redirect('preg:confirmation_order',  confirmation_id=order.id)
     else:
         oform = OrderForm()
-        pform = ProductFormSet()
+        pform = ProductForm()
+        #pform = ProductFormSet()
         
-    user_list = User.objects.order_by('username')
-    user_list = len(user_list)
-    WhoUser=request.user
-    #num_product = 
-    my_balance = UserProfile.objects.filter(user__username=WhoUser).order_by('balance')
+
     return render(request, 'preg/order_new.html', {'pform': pform})
+
 
 def edit_profile(request):
     if not request.user.is_authenticated():
@@ -99,7 +122,7 @@ def edit_pass(request):
     else:
         form = PassEditForm()
     return render(request, 'preg/edit_pass.html', {'form': form})
-
+#def edit_confirmation(request):
 
 def log_in(request):
     if request.method == 'POST':

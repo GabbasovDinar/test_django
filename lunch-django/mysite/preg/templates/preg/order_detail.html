@@ -1,18 +1,19 @@
 ﻿{% extends "preg/base.html" %}
 
-    {% block content %}
-<h1>{{ order.UserID.user.last_name }} {{ order.UserID.user.first_name}}</h1>
-<h2>{{ order.DateOrder }}</h2>
-<p>Login: {{ order.UserID.user.username }} </p>
-<p>Email: {{ order.UserID.user.email }}</p>
+{% block content %}
+<h1>{{ order.ConfirmationOrderID.UserID.user.last_name }} {{ order.ConfirmationOrderID.UserID.user.first_name}}</h1>
+<h2>{{ order.DateConfirmation }}</h2>
+<p>Login: {{ order.ConfirmationOrderID.UserID.user.username }} </p>
+<p>Email: {{ order.ConfirmationOrderID.UserID.user.email }}</p>
 
 
 <ul>
-{% for OrderProductLine in order.orderproductline_set.all %}
+{% for OrderProductLine in order.ConfirmationOrderID.orderproductline_set.all %}
     <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Служба доставки: 
 	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }}</li>
 {% endfor %}
 </ul>
+<p>Заказ доставлен: {{ order.Confirmation}}</p>
 <br>
     {% endblock %}

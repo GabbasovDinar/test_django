@@ -2,11 +2,10 @@
 {% block content %}
 
 
+<p>Дата заказа: {{ order.ConfirmationOrderID.DateOrder }}</p>
 
-
-<p>Дата заказа: {{ order.DateOrder }}</p>
 <ul>
-{% for OrderProductLine in order.orderproductline_set.all %}
+{% for OrderProductLine in order.ConfirmationOrderID.orderproductline_set.all %}
     <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Стоимость продукта:  {{ OrderProductLine.ProductID.Price }} за шт. Служба доставки: 
 	{{ OrderProductLine.ProductID.DeliveryID.NameServis }} 
@@ -14,6 +13,8 @@
 {% endfor %}
 </ul>
 <p>Сегодня потрачено: ???? $</p>
+
+<p>Заказ доставлен: {{ order.Confirmation}} <a class="btn btn-default" href="#"><span class="glyphicon glyphicon-pencil"></span></a></p>
 <p><a href="{% url 'preg:my_profile' %}">Назад</a></p>
 
 {% endblock %}

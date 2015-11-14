@@ -43,9 +43,17 @@ class CashMoveAdmin(admin.ModelAdmin):
     search_fields = ['UserCash']    
     list_filter = ['DateCashMove']    
     
+    
+class OrderConfirmationAdmin(admin.ModelAdmin):
+    fields = ['ConfirmationOrderID', 'Confirmation', 'DateConfirmation']
+    list_display = ('ConfirmationOrderID', 'Confirmation', 'DateConfirmation')
+    search_fields = ['ConfirmationOrderID'] 
+    list_filter = ['DateConfirmation']  
+        
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(CashMove, CashMoveAdmin)
 admin.site.register(ProductCategory, ProductCategoryAdmin)
 admin.site.register(DeliveryService, DeliveryServiceAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderConfirmation, OrderConfirmationAdmin)
