@@ -26,6 +26,12 @@ def order_detail(request, order_id):
         return HttpResponseRedirect('/preg/login/')    
     return render(request, 'preg/order_detail.html', {'order': order})
 
+def order_detail2(request, order_id):
+    order = get_object_or_404(OrderConfirmation, pk=order_id)
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/preg/login/')    
+    return render(request, 'preg/order_detail2.html', {'order': order})
+
 
 def confirmation_order(request, confirmation_id):
     order = get_object_or_404(Order, pk=confirmation_id)
@@ -33,16 +39,77 @@ def confirmation_order(request, confirmation_id):
         return HttpResponseRedirect('/preg/login/') 
     if request.method == "POST":
         form = OrderConfirmationForm(request.POST)
-        if form.is_valid():
+        cform = AddCashMoveForm(request.POST)
+        if form.is_valid() and cform.is_valid():
             confirmation = form.save(commit=False)
             confirmation.DateConfirmation = timezone.now()
             confirmation.ConfirmationOrderID = order
             confirmation.save()
-            user_list = User.objects.order_by('username')
-            user_list = len(user_list)
-            WhoUser=request.user
-            my_balance = 0            
-            return redirect('preg:order_detail',  order_id=confirmation.id)
+            
+            for e in OrderConfirmation.objects.filter(id=confirmation.id):
+                confirmat = e.Confirmation
+                tru = True
+            if confirmat == tru:
+                user_num = len(User.objects.order_by('username'))
+                WhoUser=request.user
+                product_list = []
+                price_list = []
+                numproduct_list = []
+                for e in Product.objects.filter(orderproductline__OrderID__orderconfirmation__id=confirmation.id):
+                    product_list.append(e.NameProduct)
+                    price_list.append(e.Price)
+                product_list = [str(x) for x in product_list]
+                k=0
+                for i in product_list:
+                    for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__id=confirmation.id, ProductID__NameProduct=product_list[k]):
+                        numproduct_list.append(e.NumProduct)
+                    k=k+1
+                k=0                 
+                user_balance = 0
+                for i in product_list:
+                    user_balance = user_balance + price_list[k]*numproduct_list[k]
+                    k=k+1
+                #_____________this user__________________    
+                cashmove = CashMove(AmountMoney=user_balance, DateCashMove=timezone.now(), UserCash=request.user.userprofile )           
+                cashmove.save() 
+                #________________________________________
+                
+                #_____________others users_______________
+                user_list = []
+                for e in User.objects.exclude(username=WhoUser):
+                    user_list.append(e.username)
+                    
+                user_list = [str(x) for x in user_list]
+                new_balance = (-1)*user_balance/user_num
+                
+                #for i in user_list:
+                    #cashmove = CashMove(AmountMoney=new_balance, DateCashMove=timezone.now(), UserCash=request.user.userprofile )
+                    
+                    #Balance = UserProfile.objects.get(user__username=user_list[k])
+                    #Balance.balance = new_balance
+                    #Balance.save()
+                    #k=k+1                 
+                #__________________________________________
+                
+                
+                Balance = UserProfile.objects.get(user__username=WhoUser)
+                Balance.balance = user_balance
+                Balance.save()
+                
+                user_list = []
+                for e in User.objects.exclude(username=WhoUser):
+                    user_list.append(e.username)
+                    
+                user_list = [str(x) for x in user_list]
+                new_balance = (-1)*user_balance/user_num
+                
+                k=0
+                for i in user_list:
+                    Balance = UserProfile.objects.get(user__username=user_list[k])
+                    Balance.balance = new_balance
+                    Balance.save()
+                    k=k+1            
+            return redirect('preg:user_order_detail',  confirmation_id=confirmation.id)
     else:
         form = OrderConfirmationForm()
     return render(request, 'preg/confirmation_order.html', {'order': order, 'form': form})
@@ -52,18 +119,16 @@ def my_profile(request):
     if request.user.is_authenticated():
         WhoUser=request.user
         confirmation_list = OrderConfirmation.objects.filter(ConfirmationOrderID__UserID__user__username=WhoUser).order_by('-DateConfirmation')
-        #order_list = Order.objects.filter(UserID__user__username=WhoUser).order_by('-DateOrder')
         cash_list = CashMove.objects.filter(UserCash__user__username=WhoUser).order_by('-DateCashMove')
-        #context = {'order_list': order_list, 'cash_list':cash_list, 'confirmation_list':confirmation_list}
         context = {'cash_list':cash_list, 'confirmation_list':confirmation_list}
         return render(request, 'preg/profile.html', context)
     else:
         return HttpResponseRedirect('/preg/login/')  
     
 def user_order_detail(request, confirmation_id):
-    order = get_object_or_404(OrderConfirmation, pk=confirmation_id)
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/preg/login/') 
+        return HttpResponseRedirect('/preg/login/')     
+    order = get_object_or_404(OrderConfirmation, pk=confirmation_id)     
     return render(request, 'preg/user_order_detail.html', {'order': order})
 
 def order_new(request):
@@ -92,6 +157,31 @@ def order_new(request):
     return render(request, 'preg/order_new.html', {'pform': pform})
 
 
+def edit_confirmation(request, confirmation_id):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/preg/login/')  
+    order = get_object_or_404(OrderConfirmation, pk=confirmation_id)
+    if request.method == "POST":
+        form = ConfirmationEditForm(request.POST or None)
+        if form.is_valid():
+            order.Confirmation = form.cleaned_data['Confirmation']
+            order.DateConfirmation = timezone.now()
+            order.save()
+            for e in OrderConfirmation.objects.filter(id=confirmation_id):
+                confirmat = e.Confirmation
+            tru = True
+            if confirmat == tru:
+                user_list = len(User.objects.order_by('username'))
+                WhoUser=request.user
+                #my_balance = 5
+                cashmove = CashMove(AmountMoney=100, DateCashMove=timezone.now(), UserCash=request.user.userprofile )           
+                cashmove.save()              
+            return HttpResponseRedirect('/preg/order/profile/')
+        
+    else:
+        form = ConfirmationEditForm()
+    return render(request, 'preg/edit_confirmation.html', {'form': form})    
+    
 def edit_profile(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/')
@@ -122,7 +212,8 @@ def edit_pass(request):
     else:
         form = PassEditForm()
     return render(request, 'preg/edit_pass.html', {'form': form})
-#def edit_confirmation(request):
+
+    
 
 def log_in(request):
     if request.method == 'POST':

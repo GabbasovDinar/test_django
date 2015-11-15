@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    balance = models.IntegerField(default=0)
+    balance = models.FloatField(default=0.0)
     def __str__(self):
         return str(self.user.username)
     

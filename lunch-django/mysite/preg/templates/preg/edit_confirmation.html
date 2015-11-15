@@ -1,0 +1,11 @@
+﻿{% extends "preg/base.html" %}
+{% block content %}
+		<div class="order_this_product">
+			{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+			<form method="POST" class="post-form">
+			{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit" class="save btn btn-default">Save</button>
+			</form>
+		</div>	
+{% endblock %}

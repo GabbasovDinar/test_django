@@ -2,7 +2,14 @@ from django import forms
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+import datetime
+from django.utils import timezone
 
+#class AddCashMoveForm(forms.ModelForm):
+    #class Meta:
+        #model = CashMove
+        #exclude = ['AmountMoney', 'DateCashMove', 'UserCash']
+        
 class OrderConfirmationForm(forms.ModelForm):
     class Meta:
         model = OrderConfirmation
@@ -42,6 +49,9 @@ class PassEditForm(forms.Form):
             raise forms.ValidationError("password no match")
         return data 
         
+class ConfirmationEditForm(forms.Form):
+    Confirmation = forms.BooleanField(False)
+
 class LoginForm(forms.Form):
     username = forms.CharField(label=u'name user')
     password = forms.CharField(label=u'password', widget=forms.PasswordInput)

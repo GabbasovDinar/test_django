@@ -63,7 +63,7 @@
 						{% endfor %}
 					</ul>
 				{% else %}
-					<p>No preg are available.</p>
+					<p>Записи не найдены.</p>
 
 			{% endif %}
 			
@@ -73,11 +73,11 @@
 			{% if cash_list %}
 					<ul class="tableCash">
 						{% for CashMove in cash_list %}
-							<li><p>{{ CashMove.AmountMoney }} $</p></li> 
+							<li><p>Сумма: {{ CashMove.AmountMoney }}$. Дата: {{ CashMove.DateCashMove }} </p></li> 
 						{% endfor %}
 					</ul>
 				{% else %}
-					<p>No preg are available.</p>
+					<p>Записи не найдены.</p>
 			{% endif %}
 			</div>
 			{% endif %}	

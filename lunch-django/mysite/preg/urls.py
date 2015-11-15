@@ -4,10 +4,12 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^order/$', views.order_list, name='order_list'),
-    url(r'^order/(?P<order_id>[0-9]+)/$', views.order_detail, name='order_detail'),
+    url(r'^order/detail/(?P<order_id>[0-9]+)/$', views.order_detail, name='order_detail'),
+    url(r'^order/(?P<order_id>[0-9]+)/$', views.order_detail2, name='order_detail2'),
     url(r'^order/confirmation/(?P<confirmation_id>[0-9]+)/$', views.confirmation_order, name='confirmation_order'),
     url(r'^order/profile/(?P<confirmation_id>[0-9]+)/$', views.user_order_detail, name='user_order_detail'),
     url(r'^order/profile/$', views.my_profile, name='my_profile'),
+    url(r'^order/profile/edit/confirmation/(?P<confirmation_id>[0-9]+)/$', views.edit_confirmation, name='edit_confirmation'),
     url(r'^order/profile/edit/profile$', views.edit_profile, name='edit_profile'),
     url(r'^order/profile/edit/pass$', views.edit_pass, name='edit_pass'),
     url(r'^order/new/$', views.order_new, name='order_new'),

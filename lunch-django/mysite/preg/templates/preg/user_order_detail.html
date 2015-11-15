@@ -14,7 +14,7 @@
 </ul>
 <p>Сегодня потрачено: ???? $</p>
 
-<p>Заказ доставлен: {{ order.Confirmation}} <a class="btn btn-default" href="#"><span class="glyphicon glyphicon-pencil"></span></a></p>
+<p>Статус доставки заказа: {{ order.Confirmation}} <a class="btn btn-default" href="{% url 'preg:edit_confirmation' order.id%}"><span class="glyphicon glyphicon-pencil"></span></a></p>
 <p><a href="{% url 'preg:my_profile' %}">Назад</a></p>
 
 {% endblock %}
