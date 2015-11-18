@@ -1,0 +1,12 @@
+			<table border="1" height="25" width="800">
+			<tr>
+					<td > Продукт: </td> 
+					<td> {{ OrderProductLine.ProductID.NameProduct }} </td>
+					<td> Количество: </td> 
+					<td> {{ OrderProductLine.NumProduct }} </td>
+					<td> Служба доставки: </td> 
+					<td> {{ OrderProductLine.ProductID.DeliveryID.NameServis }} </td>
+					<td> Телефон: </td> 
+					<td> {{ OrderProductLine.ProductID.DeliveryID.Telephone }} </td>
+			</tr>			  
+			</table>

@@ -3,6 +3,7 @@
 {% block content %}
 <h1>{{ order.ConfirmationOrderID.UserID.user.last_name }} {{ order.ConfirmationOrderID.UserID.user.first_name}}</h1>
 <h4>Дата заказа: {{ order.ConfirmationOrderID.DateOrder }}</h4>
+<h4>Дата оформления: {{ order.DateProcessing }}</h4>
 <h4>Дата доставки: {{ order.DateConfirmation }}</h4>
 <p>Статус: Заказ доставлен!</p>
 <p>Login: {{ order.ConfirmationOrderID.UserID.user.username }} </p>

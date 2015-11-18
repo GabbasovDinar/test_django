@@ -45,8 +45,8 @@ class CashMoveAdmin(admin.ModelAdmin):
     
     
 class OrderConfirmationAdmin(admin.ModelAdmin):
-    fields = ['ConfirmationOrderID', 'Confirmation', 'DateConfirmation']
-    list_display = ('ConfirmationOrderID', 'Confirmation', 'DateConfirmation')
+    fields = ['ConfirmationOrderID', 'Confirmation', 'DateConfirmation', 'OrderProcessing', 'DateProcessing']
+    list_display = ('ConfirmationOrderID', 'Confirmation', 'OrderProcessing', 'DateConfirmation')
     search_fields = ['ConfirmationOrderID'] 
     list_filter = ['DateConfirmation']  
         

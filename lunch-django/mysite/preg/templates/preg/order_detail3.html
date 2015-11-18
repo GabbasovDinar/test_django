@@ -3,7 +3,7 @@
 {% block content %}
 <h1>{{ order.ConfirmationOrderID.UserID.user.last_name }} {{ order.ConfirmationOrderID.UserID.user.first_name}}</h1>
 <h3>Дата заказа: {{ order.ConfirmationOrderID.DateOrder }}</h3>
-<p>Статус: Заказ еще не оформлен</p>
+<p>Статус: Заказ еще не доставлен</p>
 <p>Login: {{ order.ConfirmationOrderID.UserID.user.username }} </p>
 <p>Email: {{ order.ConfirmationOrderID.UserID.user.email }}</p>
 
@@ -15,9 +15,10 @@
 	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }}</li>
 {% endfor %}
 </ul>
+
 <form method="post" action="">
 {% csrf_token %}
 {{ form.as_p}}
-<button type="submit" class="save btn btn-default">Оформить</button>
+<button type="submit" class="save btn btn-default">Подтвердить доставку</button>
 </form>
 {% endblock %}

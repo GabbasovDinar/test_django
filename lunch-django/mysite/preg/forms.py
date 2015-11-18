@@ -13,7 +13,7 @@ from django.utils import timezone
 class OrderConfirmationForm(forms.ModelForm):
     class Meta:
         model = OrderConfirmation
-        exclude = ['DateConfirmation', 'ConfirmationOrderID']
+        exclude = ['DateConfirmation', 'ConfirmationOrderID', 'Confirmation', 'OrderProcessing', 'DateProcessing']
 
 class OrderForm(forms.ModelForm):
     class Meta:
@@ -23,7 +23,7 @@ class OrderForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = OrderProductLine
-        exclude = ['OrderID']
+        exclude = ['OrderID', 'Confirmation']
     #def clean(self):
         #data = self.cleaned_data
         #if (data["NumProduct"]<0):

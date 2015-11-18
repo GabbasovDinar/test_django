@@ -1,0 +1,45 @@
+﻿{% extends "preg/base.html" %}
+{% block content %}
+
+<h1>Оформление всего заказа</h1>
+
+{% if all_order_list %}
+	<ul>
+		{% for OrderConfirmation in all_order_list %}
+			<li><p>Фамилия: {{ OrderConfirmation.ConfirmationOrderID.UserID.user.last_name}}</p>
+				<p>Имя: {{ OrderConfirmation.ConfirmationOrderID.UserID.user.first_name}}</p>
+				<p>Дата заказа:</p>
+				<p>Список продуктов: </p>
+			</li>
+			<table border="3" height="25" width="800" cols="4" cellspacing="10">
+					<tr>
+					<td > Продукт:</td> 
+					<td > Количество: </td> 
+					<td > Служба доставки: </td> 
+					<td > Телефон: </td> 
+					</tr>
+			{% for OrderProductLine in OrderConfirmation.ConfirmationOrderID.orderproductline_set.all %}
+
+					<tr>
+					<td > {{ OrderProductLine.ProductID.NameProduct }} </td> 
+					<td > {{ OrderProductLine.NumProduct }} </td> 
+					<td > {{ OrderProductLine.ProductID.DeliveryID.NameServis }} </td> 
+					<td > {{ OrderProductLine.ProductID.DeliveryID.Telephone }} </td> 
+					</tr>
+
+			{% endfor %}
+				</table>
+			<p>Сумма заказа: 666 $</p>
+			<br>
+		{% endfor %}
+	</ul>
+	<p>Общая сумма заказа: 666 $</p>
+<form method="post" action="">
+{% csrf_token %}
+{{ form.as_p}}
+<button type="submit" class="save btn btn-default">Оформить заказ</button>
+</form>
+		{% else %}
+			<p>Все заказы оформлены! </p>
+{% endif %}	
+{% endblock %}

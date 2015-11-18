@@ -47,8 +47,13 @@ class Order(models.Model):
     
 class OrderConfirmation(models.Model):
     Confirmation = models.BooleanField()
+    OrderProcessing = models.BooleanField(default=False)
     DateConfirmation = models.DateTimeField(blank=True, null=True)
+    DateProcessing = models.DateTimeField(blank=True, null=True)
     ConfirmationOrderID = models.OneToOneField('Order')
+    def processingdate(self):
+        self.DateProcessing = timezone.now()
+        self.save()    
     def confirmationdate(self):
         self.DateConfirmation = timezone.now()
         self.save()
