@@ -148,8 +148,10 @@ def all_confirmation(request):
     #_________________________________________________________    
     WhoUser=request.user
     list_user = []
+    id_list = []
     for e in User.objects.filter(userprofile__order__orderconfirmation__OrderProcessing=True, userprofile__order__orderconfirmation__Confirmation=False):
         list_user.append(e.username)
+        id_list.append(e.id)
     list_user = [str(x) for x in list_user]
     
     product_list = []
@@ -173,6 +175,7 @@ def all_confirmation(request):
     d = 0
     k = 0
     user_numproduct_list = []
+
     for i in list_user:
         for j in user_product_list[d]:
             for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__OrderProcessing=True, OrderID__orderconfirmation__Confirmation=False, ProductID__NameProduct=user_product_list[d][k], OrderID__UserID__user__username=list_user[d]):
@@ -184,17 +187,33 @@ def all_confirmation(request):
         k=0
         
     user_sum_list = []
+    sum_list = []
     k=0
+    d=0
     for i in user_numproduct_list:
-        for j in user_numproduct_list[k]:
-            sum_user = user_numproduct_list[k]*user_price_list[k] #ISPRAVIT OSHIBKA
-            user_sum_list.append(sum_user) 
-        k=k+1
+        for j in user_numproduct_list[d]:
+            sum_list.append(user_numproduct_list[d][k]*user_price_list[d][k])
+            k=k+1
+        user_sum_list.append(sum_list)
+        sum_list = []
+        d=d+1
+        k=0
         
-    
-
-
-    #_________________________________
+    user_sum_order_list = []
+    sum_element = 0
+    d=0
+    k=0
+    for j in user_sum_list:
+        for i in user_sum_list[d]:
+            sum_element = sum_element + user_sum_list[d][k]
+            k=k+1
+        user_sum_order_list.append(sum_element)
+        d=d+1
+        k=0
+        sum_element = 0
+    #_________________________________________
+    check = False
+    #_________________________________________
     k=0
     for i in user_id_confirmation:
         order = get_object_or_404(OrderConfirmation, pk=user_id_confirmation[k])
@@ -203,10 +222,69 @@ def all_confirmation(request):
             if form.is_valid():
                 order.Confirmation = True
                 order.DateConfirmation = timezone.now()
-                order.save()            
+                order.save() 
+                check = True
             else:
                 form = ConfirmationEditForm()  
-        k=k+1      
+        k=k+1 
+    if check==True:
+        #CashMove all Users
+        new_sum = []
+        k=0
+        for i in user_sum_order_list:
+            new_sum.append(float(user_sum_order_list[k]*(-1)))
+            k=k+1
+        k=0
+        for i in list_user:
+            cashmove = CashMove(AmountMoney=new_sum[k], DateCashMove=timezone.now(), UserCash_id=id_list[k] )
+            cashmove.save()
+            k=k+1
+            
+        #Save balans all users
+        k=0
+        this_balance_users = []
+        this_cashmove_users = []
+        for i in list_user:    
+            for e in UserProfile.objects.filter(user__username=list_user[k]):
+                this_balance_users.append(e.balance)
+            for e in CashMove.objects.filter(UserCash__user__username=list_user[k]):
+                this_cashmove = e.AmountMoney
+            this_cashmove_users.append(this_cashmove) 
+            k=k+1
+        k=0   
+        this_new_balance_user = []
+        for i in this_cashmove_users:
+            this_new_balance_user.append(this_cashmove_users[k]+this_balance_users[k])
+            k=k+1
+            
+        k=0   
+        for i in list_user: 
+            Balance = UserProfile.objects.get(user__username=list_user[k])
+            Balance.balance = this_new_balance_user[k]
+            Balance.save()
+            k=k+1
+     
+        #CashMove this User
+        cash_sum_this_user = 0
+        k=0
+        for i in user_sum_order_list:
+            cash_sum_this_user=cash_sum_this_user+user_sum_order_list[k]
+            k=k+1
+        cashmove = CashMove(AmountMoney=cash_sum_this_user, DateCashMove=timezone.now(), UserCash=request.user.userprofile )           
+        cashmove.save()    
+            
+        #this user balance 
+        for e in UserProfile.objects.filter(user__username=WhoUser):
+            this_balance = e.balance 
+        # save balance this user
+        for e in CashMove.objects.filter(UserCash__user__username=WhoUser):
+            this_cashmove = e.AmountMoney 
+            
+        new_user_balance = this_balance + this_cashmove 
+        
+        Balance = UserProfile.objects.get(user__username=WhoUser)
+        Balance.balance = new_user_balance
+        Balance.save()               
     return render(request, 'preg/all_confirmation.html', context)
     
 def edit_profile(request):
