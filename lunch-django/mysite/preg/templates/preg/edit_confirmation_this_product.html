@@ -1,0 +1,12 @@
+﻿{% extends "preg/base.html" %}
+{% block content %}
+<h1>Наличие продукта в службе доставки</h1>
+<p>Чтобы указать на отсутсвие товара у службы доставки, уберите галочку: </p>
+			{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+				<form method="post" action="">
+						{% csrf_token %}
+						{{ form.as_p}}
+				<button type="submit" class="save btn btn-default">Save</button>
+				</form>
+
+{% endblock %}

@@ -11,12 +11,13 @@
 				<p>Дата заказа:</p>
 				<p>Список продуктов: </p>
 			</li>
-			<table border="3" height="25" width="800" cols="4" cellspacing="10">
+			<table border="3" height="25" width="800" cols="5" cellspacing="10">
 					<tr>
 					<td > Продукт:</td> 
 					<td > Количество: </td> 
 					<td > Служба доставки: </td> 
 					<td > Телефон: </td> 
+					<td > В наличии: </td> 
 					</tr>
 			{% for OrderProductLine in OrderConfirmation.ConfirmationOrderID.orderproductline_set.all %}
 
@@ -25,15 +26,15 @@
 					<td > {{ OrderProductLine.NumProduct }} </td> 
 					<td > {{ OrderProductLine.ProductID.DeliveryID.NameServis }} </td> 
 					<td > {{ OrderProductLine.ProductID.DeliveryID.Telephone }} </td> 
+					<td > {{ OrderProductLine.Confirmation }} </td> 
 					</tr>
 
 			{% endfor %}
 				</table>
-			<p>Сумма заказа: 666 $</p>
 			<br>
 		{% endfor %}
 	</ul>
-	<p>Общая сумма заказа: 666 $</p>
+	<p>Общая сумма заказа: {{ user_price_list_sum }} $</p>
 <form method="post" action="">
 {% csrf_token %}
 {{ form.as_p}}

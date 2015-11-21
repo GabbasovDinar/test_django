@@ -13,8 +13,10 @@
     <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Служба доставки: 
 	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }}</li>
-{% endfor %}
 </ul>
+Наличие продукта в службе доставки: {{ OrderProductLine.Confirmation }}
+{% endfor %}
+
 
 <form method="post" action="">
 {% csrf_token %}

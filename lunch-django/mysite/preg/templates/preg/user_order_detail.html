@@ -10,9 +10,10 @@
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Стоимость продукта:  {{ OrderProductLine.ProductID.Price }} за шт. Служба доставки: 
 	{{ OrderProductLine.ProductID.DeliveryID.NameServis }} 
 	</li>
+	Наличие продукта в службе доставки: {{ OrderProductLine.Confirmation }}
 {% endfor %}
 </ul>
-<p>Сегодня потрачено: ???? $</p>
+<p>Потрачено: -{{ user_balance }} $</p>
 
 <p>Статус доставки заказа: {{ order.Confirmation}} </p>
 <p><a href="{% url 'preg:my_profile' %}">Назад</a></p>

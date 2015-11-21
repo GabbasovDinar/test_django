@@ -24,12 +24,16 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = OrderProductLine
         exclude = ['OrderID', 'Confirmation']
-    #def clean(self):
-        #data = self.cleaned_data
-        #if (data["NumProduct"]<0):
-            #raise forms.ValidationError("Number of products can not be negative")
-        #return data 
-             
+    def clean(self):
+        data = self.cleaned_data
+        if (data["NumProduct"]<=0):
+            raise forms.ValidationError("Number of products can not be negative")
+        return data 
+        
+class ConfirmationEditForm(forms.Form):
+    Confirmation = forms.BooleanField(False)
+        
+               
 class CashMoveForm(forms.ModelForm):
     class Meta:
         model = CashMove

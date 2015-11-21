@@ -11,7 +11,7 @@
 	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }}</li>
 {% endfor %}
 </ul>
-<p>Общая стоимость заказа: ***** $</p>
+<p>Общая стоимость заказа: {{ user_balance}} $</p>
 <p>Дата заказа: {{ order.DateOrder }}</p><br>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form method="post" action="">
@@ -19,7 +19,7 @@
 {{ form.as_p}}
 <p>Для сохранения и подтверждения вашего заказа, нажмите на кнопку save</p>
 <button type="submit" class="save btn btn-default">Save</button>
-<a href="#"><button type="button" class="btn btn-danger">Отмена</button></a>
+<a href="{% url 'preg:del_this_order' order.id%}"><button type="button" class="btn btn-danger">Отмена</button></a>
 </form>
 				
 

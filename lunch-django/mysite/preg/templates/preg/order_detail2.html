@@ -12,9 +12,11 @@
 {% for OrderProductLine in order.ConfirmationOrderID.orderproductline_set.all %}
     <li>Заказан продукт: {{ OrderProductLine.ProductID.NameProduct }} 
 	в количестве  {{ OrderProductLine.NumProduct }} штук. Служба доставки: 
-	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }}</li>
+	{{ OrderProductLine.ProductID.DeliveryID.NameServis }}. Телефон: {{ OrderProductLine.ProductID.DeliveryID.Telephone }} </p></li>
+	</ul>
+	<p>Наличие продукта: {{ OrderProductLine.Confirmation }} <a class="btn btn-default" href="{% url 'preg:edit_confirmation_this_product' OrderProductLine.id%}"><span class="glyphicon glyphicon-pencil"></span></a></p>
 {% endfor %}
-</ul>
+
 <form method="post" action="">
 {% csrf_token %}
 {{ form.as_p}}
