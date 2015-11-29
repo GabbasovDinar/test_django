@@ -1,13 +1,41 @@
 ﻿{% extends "preg/base.html" %}
+<script>
+$(document).ready(function() {
+	fixTotalFormsNumber();
+	initiateControls();
+	hideDeletedExercises(); 
+});
+</script>
 {% block content %}
+
 		<div class="order_this_product">
 			<h1>Заказать</h1>
 			{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 				<form method="post" action="">
+				<div class="parent">
 						{% csrf_token %}
-						{{ pform.as_p}}
-				<button type="submit" class="save btn btn-default">Save</button>
+						<p>
+						{{ oform.as_ul }}
+						{{ sform.as_ul }}
+						{{ exercisesFormset.management_form }}
+						</p>
+			{% for exerciseForm in exercisesFormset.forms %}
+				<ul class="exercise-form-data">
+					{{ exerciseForm.as_ul }}
+			<li class="controls">
+						<span class="up clickable">вверх</span>
+						<span class="down clickable">вниз</span>
+						<span class="delete clickable">удалить</span>
+						<span class="add clickable">добавить</span>
+					</li>
+				</ul>
+			{% endfor %}
+			</div>
+			<input type="hidden" name="hide_exercises" value="{{ hide_exercises }}" />
+			<input type="submit" class="save btn btn-default" name="Добавить" />
 				</form>
 				
 		</div>	
+		
+
 {% endblock %}

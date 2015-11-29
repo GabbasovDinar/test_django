@@ -5,10 +5,19 @@ from django.contrib.auth import authenticate
 import datetime
 from django.utils import timezone
 
-#class AddCashMoveForm(forms.ModelForm):
-    #class Meta:
-        #model = CashMove
-        #exclude = ['AmountMoney', 'DateCashMove', 'UserCash']
+
+#---------------------------------------------------------------------
+from django.forms.extras.widgets import SelectDateWidget
+
+FAVORITE_COLORS_CHOICES = (('blue', Product.objects.all()),
+                           ('green', 'Green'),
+                           ('black', 'Black'))
+
+class SimpleForm(forms.Form):
+    favorite_colors = forms.MultipleChoiceField(required=False,
+                                                widget=forms.CheckboxSelectMultiple, choices=FAVORITE_COLORS_CHOICES)
+    
+#----------------------------------------------------------------------
         
 class OrderConfirmationForm(forms.ModelForm):
     class Meta:
@@ -20,14 +29,15 @@ class OrderForm(forms.ModelForm):
         model = Order
         exclude = ['DateOrder', 'UserID']
          
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = OrderProductLine
-        exclude = ['OrderID', 'Confirmation']
+class ProductForm(forms.Form):
+    
+    NumProduct = forms.IntegerField(max_value=1000, min_value=1, error_messages={'required': 'Please input num product'})
+    ProductID = forms.ModelChoiceField(Product.objects.all(), error_messages={'required': 'Please enter product'})
+
     def clean(self):
         data = self.cleaned_data
-        if (data["NumProduct"]<=0):
-            raise forms.ValidationError("Number of products can not be negative")
+        if (data['ProductID'] is None):
+            raise forms.ValidationError("Please enter product")
         return data 
         
 class ConfirmationEditForm(forms.Form):

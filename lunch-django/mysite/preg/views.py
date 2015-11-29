@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, UserManager
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, HttpResponse, render_to_response
 from django.utils import timezone
 from .models import *
 from .forms import *
@@ -8,6 +8,7 @@ from django.contrib import auth
 from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory
+from django.template import RequestContext
 
 def index(request):
     return render(request, 'preg/index.html')
@@ -192,29 +193,38 @@ def user_order_detail(request, confirmation_id):
 
     return render(request, 'preg/user_order_detail.html', {'order': order, 'user_balance': user_balance})
 
+@login_required
 def order_new(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/preg/login/') 
-    #ProductFormSet = formset_factory(ProductForm, extra=3)
+    user = request.user
     if request.method == "POST":
         oform = OrderForm(request.POST)
-        pform = ProductForm(request.POST)
-        #pform = ProductFormSet(request.POST)
-        if oform.is_valid() and pform.is_valid():
+        sform = SimpleForm(request.POST)
+        exercisesFormsetClass = formset_factory( ProductForm )
+        exercisesFormset = exercisesFormsetClass( request.POST, prefix = "exercises" )
+        if oform.is_valid() and exercisesFormset.is_valid():
             order = oform.save(commit=False)
             order.DateOrder = timezone.now()
             order.UserID = request.user.userprofile 
-            order.save()
-            product = pform.save(commit=False)
-            product.OrderID = order
-            product.Confirmation = True
-            product.save()
+            order.save()   
+            sform.save()
+            for position, exerciseForm in enumerate( exercisesFormset.forms, start = 1 ):
+                exerciseData = exerciseForm.cleaned_data
+                exercise = OrderProductLine()
+                exercise.ProductID = exerciseData['ProductID']
+                exercise.OrderID = order
+                exercise.Confirmation = True
+                exercise.NumProduct = exerciseData['NumProduct']
+                exercise.save()
             return redirect('preg:confirmation_order',  confirmation_id=order.id)
+        hide_exercises = request.POST["hide_exercises"]
     else:
+        exercisesFormsetClass = formset_factory( ProductForm, extra = 1 )
         oform = OrderForm()
-        pform = ProductForm()
-        #pform = ProductFormSet()
-    return render(request, 'preg/order_new.html', {'pform': pform})
+        sform = SimpleForm()
+        exercisesFormset = exercisesFormsetClass( prefix = "exercises" )
+        hide_exercises = ""    
+    return render(request, 'preg/order_new.html', { "sform": sform, "oform": oform, "exercisesFormset": exercisesFormset, "hide_exercises": hide_exercises })
+    
 
 def all_order(request):
     if not request.user.is_authenticated():
