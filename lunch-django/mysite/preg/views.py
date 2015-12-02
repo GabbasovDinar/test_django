@@ -3,11 +3,12 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRe
 from django.utils import timezone
 from .models import *
 from .forms import *
+from django.core.context_processors import csrf
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import auth
 from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
-from django.forms.formsets import formset_factory
+from django.forms.formsets import formset_factory, BaseFormSet
 from django.template import RequestContext
 
 def index(request):
@@ -196,35 +197,37 @@ def user_order_detail(request, confirmation_id):
 @login_required
 def order_new(request):
     user = request.user
+    class RequiredFormSet(BaseFormSet):
+        def __init__(self, *args, **kwargs):
+            super(RequiredFormSet, self).__init__(*args, **kwargs)
+            for form in self.forms:
+                form.empty_permitted = False  
+    TodoItemFormSet = formset_factory(ProductForm, max_num=10, formset=RequiredFormSet)
     if request.method == "POST":
-        oform = OrderForm(request.POST)
-        sform = SimpleForm(request.POST)
-        exercisesFormsetClass = formset_factory( ProductForm )
-        exercisesFormset = exercisesFormsetClass( request.POST, prefix = "exercises" )
-        if oform.is_valid() and exercisesFormset.is_valid():
-            order = oform.save(commit=False)
-            order.DateOrder = timezone.now()
-            order.UserID = request.user.userprofile 
-            order.save()   
-            sform.save()
-            for position, exerciseForm in enumerate( exercisesFormset.forms, start = 1 ):
-                exerciseData = exerciseForm.cleaned_data
-                exercise = OrderProductLine()
-                exercise.ProductID = exerciseData['ProductID']
-                exercise.OrderID = order
-                exercise.Confirmation = True
-                exercise.NumProduct = exerciseData['NumProduct']
-                exercise.save()
-            return redirect('preg:confirmation_order',  confirmation_id=order.id)
-        hide_exercises = request.POST["hide_exercises"]
+        todo_list_form = OrderForm(request.POST)
+        todo_item_formset = TodoItemFormSet(request.POST, request.FILES)
+        if todo_list_form.is_valid() and todo_item_formset.is_valid():   
+            todo_list = todo_list_form.save(commit=False)
+            todo_list.DateOrder = timezone.now()
+            todo_list.UserID = request.user.userprofile
+            todo_list.save()  
+            for form in todo_item_formset.forms:
+                todo_item = form.save(commit=False)
+                todo_item.OrderID = todo_list
+                todo_item.Confirmation = True
+                todo_item.NumProduct = form.cleaned_data['NumProduct']
+                todo_item.save()            
+            return redirect('preg:confirmation_order',  confirmation_id=todo_list.id)
     else:
-        exercisesFormsetClass = formset_factory( ProductForm, extra = 1 )
-        oform = OrderForm()
-        sform = SimpleForm()
-        exercisesFormset = exercisesFormsetClass( prefix = "exercises" )
-        hide_exercises = ""    
-    return render(request, 'preg/order_new.html', { "sform": sform, "oform": oform, "exercisesFormset": exercisesFormset, "hide_exercises": hide_exercises })
-    
+        todo_list_form = OrderForm()
+        todo_item_formset = TodoItemFormSet()        
+    c = {'todo_list_form': todo_list_form, 'todo_item_formset': todo_item_formset,}
+    c.update(csrf(request)) 
+    return render_to_response('preg/order_new.html', c)
+
+
+
+
 
 def all_order(request):
     if not request.user.is_authenticated():

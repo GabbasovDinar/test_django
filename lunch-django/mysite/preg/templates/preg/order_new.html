@@ -1,41 +1,102 @@
 ﻿{% extends "preg/base.html" %}
-<script>
-$(document).ready(function() {
-	fixTotalFormsNumber();
-	initiateControls();
-	hideDeletedExercises(); 
-});
-</script>
+
 {% block content %}
 
-		<div class="order_this_product">
-			<h1>Заказать</h1>
-			{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-				<form method="post" action="">
-				<div class="parent">
-						{% csrf_token %}
-						<p>
-						{{ oform.as_ul }}
-						{{ sform.as_ul }}
-						{{ exercisesFormset.management_form }}
-						</p>
-			{% for exerciseForm in exercisesFormset.forms %}
-				<ul class="exercise-form-data">
-					{{ exerciseForm.as_ul }}
-			<li class="controls">
-						<span class="up clickable">вверх</span>
-						<span class="down clickable">вниз</span>
-						<span class="delete clickable">удалить</span>
-						<span class="add clickable">добавить</span>
-					</li>
-				</ul>
-			{% endfor %}
-			</div>
-			<input type="hidden" name="hide_exercises" value="{{ hide_exercises }}" />
-			<input type="submit" class="save btn btn-default" name="Добавить" />
-				</form>
-				
-		</div>	
-		
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+  function updateElementIndex(el, prefix, ndx) {
+    var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+    var replacement = prefix + '-' + ndx + '-';
+    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,
+ replacement));
+    if (el.id) el.id = el.id.replace(id_regex, replacement);
+    if (el.name) el.name = el.name.replace(id_regex, replacement);
+  }
+
+  function deleteForm(btn, prefix) {
+    var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+
+    if (formCount > 1) {
+      $(btn).parents('.item').remove();
+      var forms = $('.item'); 
+      $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+      var i = 0;
+      for (formCount = forms.length; i < formCount; i++) {
+        $(forms.get(i)).children().children().each(function() {
+          updateElementIndex(this, prefix, i);
+        });
+      }
+    } 
+    else {
+        alert("Вы должны выбрать хотя бы один продукт!");
+    }
+    return false;
+  }
+
+
+  function addForm(btn, prefix) {
+    var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+ 
+    if (formCount < 10) {
+      var row = $(".item:first").clone(false).get(0);
+
+      $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+      $(".errorlist", row).remove();
+      $(row).children().removeClass('error');
+      
+      $(row).children().children().each(function() {
+        updateElementIndex(this, prefix, formCount);
+        if ( $(this).attr('type') == 'text' )
+          $(this).val('');
+      });
+      
+      $(row).find('.delete').click(function() {
+        return deleteForm(this, prefix);
+      });
+
+
+      $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1); 
+
+    } 
+    else {
+      alert("Извините, Вы достигли максимального количества продуктов. ");
+    }
+    return false;
+  }
+
+  $("#add").click(function() {
+    return addForm(this, 'form');
+  });
+  
+  $(".delete").click(function() {
+    return deleteForm(this, 'form');
+  });
+
+
+});
+</script>
+
+<form action="" method="POST">
+{% csrf_token %}
+    <div class="section">
+        {{ todo_list_form.as_p }}
+    </div>
+
+    <h2>Выберете продукт для заказа</h2>
+    {{ todo_item_formset.management_form }}
+    {% for form in todo_item_formset.forms %}
+    <div class="item">
+      {{ form.as_p }} 
+	<p><a class="delete" href="#">Удалить</a></p>
+    </div>
+    {% endfor %}
+    <p><a id="add" href="#">Добавить новый продукт</a></p>
+
+    <input type="submit" value=" Submit " />
+
+</form>
 
 {% endblock %}

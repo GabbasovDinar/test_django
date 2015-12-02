@@ -7,16 +7,16 @@ from django.utils import timezone
 
 
 #---------------------------------------------------------------------
-from django.forms.extras.widgets import SelectDateWidget
-
-FAVORITE_COLORS_CHOICES = (('blue', Product.objects.all()),
-                           ('green', 'Green'),
-                           ('black', 'Black'))
 
 class SimpleForm(forms.Form):
-    favorite_colors = forms.MultipleChoiceField(required=False,
-                                                widget=forms.CheckboxSelectMultiple, choices=FAVORITE_COLORS_CHOICES)
+
+    THREE_CHOICES = (
+        ('1', 'Choice 1'),
+        ('2', 'Choice 2'),
+        ('3', 'Choice 3'),
+    )
     
+    multiple_checkboxes = forms.MultipleChoiceField(choices=THREE_CHOICES, widget=forms.CheckboxSelectMultiple)       
 #----------------------------------------------------------------------
         
 class OrderConfirmationForm(forms.ModelForm):
@@ -27,18 +27,19 @@ class OrderConfirmationForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        exclude = ['DateOrder', 'UserID']
-         
-class ProductForm(forms.Form):
-    
-    NumProduct = forms.IntegerField(max_value=1000, min_value=1, error_messages={'required': 'Please input num product'})
-    ProductID = forms.ModelChoiceField(Product.objects.all(), error_messages={'required': 'Please enter product'})
-
-    def clean(self):
-        data = self.cleaned_data
-        if (data['ProductID'] is None):
-            raise forms.ValidationError("Please enter product")
-        return data 
+        exclude = ['DateOrder', 'UserID']       
+        
+class ProductForm(forms.ModelForm):
+    NumProduct = forms.IntegerField(min_value=1, error_messages={'required': 'Please input num product'})
+    def clean_NumProduct(self): 
+        data = self.cleaned_data        
+        if (data['NumProduct'] == ""):
+            raise forms.ValidationError("Please enter Num product") 
+        return data['NumProduct']      
+    class Meta:
+        model = OrderProductLine
+        exclude = ['Confirmation', 'OrderID', 'NumProduct']
+  
         
 class ConfirmationEditForm(forms.Form):
     Confirmation = forms.BooleanField(False)
