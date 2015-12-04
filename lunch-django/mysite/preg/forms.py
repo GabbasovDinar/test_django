@@ -5,18 +5,26 @@ from django.contrib.auth import authenticate
 import datetime
 from django.utils import timezone
 
-
-#---------------------------------------------------------------------
+#--------------------------Random order---------------------------------
 
 class SimpleForm(forms.Form):
-
-    THREE_CHOICES = (
-        ('1', 'Choice 1'),
-        ('2', 'Choice 2'),
-        ('3', 'Choice 3'),
-    )
     
-    multiple_checkboxes = forms.MultipleChoiceField(choices=THREE_CHOICES, widget=forms.CheckboxSelectMultiple)       
+    new_choices = []
+    new_choices_id = []
+    for e in ProductCategory.objects.all():
+        new_choices.append(e.NameCategory) 
+        new_choices_id.append(e.id)
+        
+    new_choices = [str(x) for x in new_choices]
+    
+    new_new = []
+    k=0
+    for i in new_choices:
+        new_new.append((new_choices_id[k], new_choices[k]))
+        k=k+1
+    THREE_CHOICES = tuple(new_new, )
+    Random_order = forms.MultipleChoiceField(choices=THREE_CHOICES, widget=forms.CheckboxSelectMultiple, required=False, error_messages={'required': 'No correct'})
+
 #----------------------------------------------------------------------
         
 class OrderConfirmationForm(forms.ModelForm):
@@ -30,17 +38,17 @@ class OrderForm(forms.ModelForm):
         exclude = ['DateOrder', 'UserID']       
         
 class ProductForm(forms.ModelForm):
-    NumProduct = forms.IntegerField(min_value=1, error_messages={'required': 'Please input num product'})
-    def clean_NumProduct(self): 
-        data = self.cleaned_data        
-        if (data['NumProduct'] == ""):
-            raise forms.ValidationError("Please enter Num product") 
-        return data['NumProduct']      
+    NumProduct = forms.IntegerField(min_value=1, error_messages={'required': 'Please input num bla bla bla product'})
+    #def clean_NumProduct(self): 
+        #data = self.cleaned_data        
+        #if (data['NumProduct'] == ""):
+            #raise forms.ValidationError("Please enter Num product") 
+        #return data['NumProduct']      
     class Meta:
         model = OrderProductLine
         exclude = ['Confirmation', 'OrderID', 'NumProduct']
-  
-        
+
+
 class ConfirmationEditForm(forms.Form):
     Confirmation = forms.BooleanField(False)
         

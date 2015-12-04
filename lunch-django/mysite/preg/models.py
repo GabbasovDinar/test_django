@@ -21,8 +21,6 @@ class CashMove(models.Model):
     def __str__(self): 
         return str(self.AmountMoney) 
     
-    
-    
 class Product(models.Model):
     NameProduct = models.CharField(max_length=30)
     Price = models.FloatField()

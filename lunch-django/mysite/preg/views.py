@@ -9,6 +9,7 @@ from django.contrib import auth
 from django.views.generic.base import View
 from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory, BaseFormSet
+from django.forms import modelformset_factory
 from django.template import RequestContext
 
 def index(request):
@@ -74,7 +75,6 @@ def order_detail3(request, order_id):
                     for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__id=order.id, ProductID__NameProduct=product_list[k]):
                         numproduct_list.append(e.NumProduct)
                     k=k+1
-            
                 k=0                 
                 user_balance = 0
                 for i in product_list:
@@ -99,14 +99,12 @@ def order_detail3(request, order_id):
                 Balance = UserProfile.objects.get(user__id=user_this_id)
                 Balance.balance = new_balance
                 Balance.save()
-               
                     
                 #_____________this user CashMove__________________    
                 cashmove = CashMove(AmountMoney=user_balance, DateCashMove=timezone.now(), UserCash=request.user.userprofile )           
                 cashmove.save() 
                 #________________________________________
                 
-            
                 #_____________this user balance____________
                 for e in UserProfile.objects.filter(user__username=WhoUser):
                     this_balance = e.balance              
@@ -185,13 +183,11 @@ def user_order_detail(request, confirmation_id):
         for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__id=order.id, ProductID__NameProduct=product_list[k]):
             numproduct_list.append(e.NumProduct)
         k=k+1
-    
     k=0                 
     user_balance = 0
     for i in product_list:
         user_balance = user_balance + price_list[k]*numproduct_list[k]
         k=k+1    
-
     return render(request, 'preg/user_order_detail.html', {'order': order, 'user_balance': user_balance})
 
 @login_required
@@ -205,12 +201,39 @@ def order_new(request):
     TodoItemFormSet = formset_factory(ProductForm, max_num=10, formset=RequiredFormSet)
     if request.method == "POST":
         todo_list_form = OrderForm(request.POST)
+        sform = SimpleForm(request.POST)
         todo_item_formset = TodoItemFormSet(request.POST, request.FILES)
-        if todo_list_form.is_valid() and todo_item_formset.is_valid():   
+        if todo_list_form.is_valid() and todo_item_formset.is_valid() and sform.is_valid():   
             todo_list = todo_list_form.save(commit=False)
             todo_list.DateOrder = timezone.now()
             todo_list.UserID = request.user.userprofile
             todo_list.save()  
+            
+            #-----------------this is random order-----------------------
+            
+            random_user_product_id = sform.cleaned_data['Random_order']
+            if random_user_product_id!=None:
+                product_category_id = random_user_product_id #for example
+                random_product_id = []
+                k=0
+                import random
+                for i in product_category_id:
+                    random_product_list_id = []
+                    for e in Product.objects.filter(ProductCategoryID__id=product_category_id[k]):
+                        random_product_list_id.append(e.id)
+                    random_product_id.append(random.choice(random_product_list_id))
+                    k=k+1
+                    
+                random_num_product = 1 #num product for random order
+                k=0  
+                for i in random_product_id:  
+                    product = OrderProductLine(NumProduct=random_num_product, Confirmation=True, OrderID_id=todo_list.id, ProductID_id=random_product_id[k])
+                    product.save()  
+                    k=k+1
+                
+            #------------------------------------------------------------
+            
+            
             for form in todo_item_formset.forms:
                 todo_item = form.save(commit=False)
                 todo_item.OrderID = todo_list
@@ -219,15 +242,12 @@ def order_new(request):
                 todo_item.save()            
             return redirect('preg:confirmation_order',  confirmation_id=todo_list.id)
     else:
+        sform = SimpleForm()
         todo_list_form = OrderForm()
-        todo_item_formset = TodoItemFormSet()        
-    c = {'todo_list_form': todo_list_form, 'todo_item_formset': todo_item_formset,}
+        todo_item_formset = TodoItemFormSet() 
+    c = {'todo_list_form': todo_list_form, 'todo_item_formset': todo_item_formset, 'sform': sform}
     c.update(csrf(request)) 
     return render_to_response('preg/order_new.html', c)
-
-
-
-
 
 def all_order(request):
     if not request.user.is_authenticated():
@@ -274,7 +294,6 @@ def all_order(request):
         user_price_list_sum = user_price_list_sum + user_price_list2[k]
         k=k+1   
     context = {'all_order_list': all_order_list, 'user_price_list_sum': user_price_list_sum}  
-    #context = {'all_order_list': all_order_list} 
     return render(request, 'preg/all_order.html', context)
 
 def all_confirmation(request):

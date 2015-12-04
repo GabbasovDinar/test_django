@@ -94,9 +94,10 @@ $(document).ready(function() {
     </div>
     {% endfor %}
     <p><a id="add" href="#">Добавить новый продукт</a></p>
-
-    <input type="submit" value=" Submit " />
+	<h2>Случайный заказ</h2>
+	{{ sform.as_p }} 
+    <input type="submit" value=" Оформить " />
 
 </form>
-
+	
 {% endblock %}
