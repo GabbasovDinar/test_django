@@ -324,8 +324,8 @@ def all_confirmation(request):
     numproduct_list = []  
     user_product_list = []
     user_price_list = []
-
     k1=0
+    
     for i in list_user:
         for e in Product.objects.filter(orderproductline__Confirmation=True, orderproductline__OrderID__orderconfirmation__id=user_id_confirmation[k1]):
             product_list.append(e.NameProduct)
@@ -336,12 +336,15 @@ def all_confirmation(request):
         product_list = []
         price_list = [] 
         k1=k1+1
-        
+    #up corrected 
+    #error the end massiv is not correct
+    #2 errors when name of products odinakovie
+    #_________________________________________________
     d = 0
     k = 0
     user_numproduct_list = []
 
-    for i in list_user:
+    for i in user_id_confirmation:
         for j in user_product_list[d]:
             for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__id=user_id_confirmation[d], ProductID__NameProduct=user_product_list[d][k]):
                 numproduct_list.append(e.NumProduct)
