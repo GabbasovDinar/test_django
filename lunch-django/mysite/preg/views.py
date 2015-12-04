@@ -252,14 +252,15 @@ def order_new(request):
 def all_order(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/')
-    all_order_list = OrderConfirmation.objects.filter(Confirmation=False, OrderProcessing=False).order_by('-DateConfirmation')
     user_price_list2 = []  
-    user_id = []
+    user_id_list = []
+    all_order_list = OrderConfirmation.objects.filter(Confirmation=False, OrderProcessing=False).order_by('-DateConfirmation')
     for e in OrderConfirmation.objects.filter(Confirmation=False, OrderProcessing=False):
-        user_id.append(e.id)
-    k=0
-    for i in user_id:
-        order = get_object_or_404(OrderConfirmation, pk=user_id[k])
+        user_id_list.append(e.id)
+        
+    kk=0
+    for i in user_id_list:
+        order = get_object_or_404(OrderConfirmation, pk=user_id_list[kk])
         if request.method == "POST":
             form = ConfirmationEditForm(request.POST or None)
             if form.is_valid():
@@ -287,7 +288,7 @@ def all_order(request):
             user_balance2 = user_balance2 + price_list2[k]*numproduct_list2[k]
             k=k+1                
         user_price_list2.append(user_balance2)        
-        #k=k+1
+        kk=kk+1
     k=0
     user_price_list_sum = 0
     for i in user_price_list2:
@@ -299,7 +300,8 @@ def all_order(request):
 def all_confirmation(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/preg/login/')
-    all_confirmation_list = OrderConfirmation.objects.filter(Confirmation=False, OrderProcessing=True).order_by('-DateConfirmation')    
+    
+    all_confirmation_list = OrderConfirmation.objects.filter(Confirmation=False, OrderProcessing=True).order_by('-DateConfirmation')
     user_price_list2 = [] 
     user_id_confirmation = []
     for e in OrderConfirmation.objects.filter(Confirmation=False, OrderProcessing=True):
@@ -308,20 +310,24 @@ def all_confirmation(request):
     WhoUser=request.user
     list_user = []
     id_list = []
-    for e in User.objects.filter(userprofile__order__orderconfirmation__OrderProcessing=True, userprofile__order__orderconfirmation__Confirmation=False):
-        list_user.append(e.username)
-        id_list.append(e.id)
+    k=0
+    for i in user_id_confirmation:
+        for e in User.objects.filter(userprofile__order__orderconfirmation__id=user_id_confirmation[k]):
+            list_user.append(e.username)
+            id_list.append(e.id)
+        k=k+1
     list_user = [str(x) for x in list_user]
     
+    all_order_for_user = []
     product_list = []
     price_list = []
     numproduct_list = []  
     user_product_list = []
     user_price_list = []
-    k=0
-    
+
+    k1=0
     for i in list_user:
-        for e in Product.objects.filter(orderproductline__Confirmation=True, orderproductline__OrderID__orderconfirmation__Confirmation=False, orderproductline__OrderID__orderconfirmation__OrderProcessing = True, orderproductline__OrderID__UserID__user__username=list_user[k]):
+        for e in Product.objects.filter(orderproductline__Confirmation=True, orderproductline__OrderID__orderconfirmation__id=user_id_confirmation[k1]):
             product_list.append(e.NameProduct)
             price_list.append(e.Price)
         product_list = [str(x) for x in product_list]       
@@ -329,7 +335,7 @@ def all_confirmation(request):
         user_price_list.append(price_list)
         product_list = []
         price_list = [] 
-        k=k+1
+        k1=k1+1
         
     d = 0
     k = 0
@@ -337,7 +343,7 @@ def all_confirmation(request):
 
     for i in list_user:
         for j in user_product_list[d]:
-            for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__OrderProcessing=True, OrderID__orderconfirmation__Confirmation=False, ProductID__NameProduct=user_product_list[d][k], OrderID__UserID__user__username=list_user[d]):
+            for e in OrderProductLine.objects.filter(OrderID__orderconfirmation__id=user_id_confirmation[d], ProductID__NameProduct=user_product_list[d][k]):
                 numproduct_list.append(e.NumProduct)
             k=k+1
         user_numproduct_list.append(numproduct_list)
@@ -373,9 +379,9 @@ def all_confirmation(request):
     #_________________________________________
     check = False
     #_________________________________________
-    k=0
+    kk=0
     for i in user_id_confirmation:
-        order = get_object_or_404(OrderConfirmation, pk=user_id_confirmation[k])
+        order = get_object_or_404(OrderConfirmation, pk=user_id_confirmation[kk])
         if request.method == "POST":
             form = ConfirmationEditForm(request.POST or None)
             if form.is_valid():
@@ -404,7 +410,7 @@ def all_confirmation(request):
             user_balance = user_balance + price_list[k]*numproduct_list[k]
             k=k+1                
         user_price_list2.append(user_balance)  
-        #k=k+1 
+        kk=kk+1 
     if check==True:
         #CashMove all Users
         new_sum = []

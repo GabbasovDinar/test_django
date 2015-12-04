@@ -41,6 +41,6 @@
 <button type="submit" class="save btn btn-default">Подтвердить доставку</button>
 </form>
 		{% else %}
-			<p>Все заказы доставлены! </p>
+			<p>Все заказы доставлены! </p><p><a href="{% url 'preg:order_list' %}">Назад</a><p>
 {% endif %}	
 {% endblock %}
